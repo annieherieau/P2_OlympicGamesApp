@@ -270,6 +270,12 @@ TODO :
 ### Arborescence finale
 
 - src/app/
+  - core/
+    - services/
+      - data.service.ts
+    - models/
+      - olympic.model.ts
+      - participation.model.ts
   - components/
     - header/
       - header.component.*
@@ -288,11 +294,6 @@ TODO :
       - dashboard.component.*
     - not-found/
       - not-found.component.*
-  - services/
-    - data.service.ts
-  - models/
-    - olympic.model.ts
-    - participation.model.ts
 
 ### Rôles et Responsabilités
 L'architecture sépare l'affichage réutilisable (composants), les pages, l'accès aux données et la description des données.
