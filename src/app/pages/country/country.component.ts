@@ -1,8 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { DataService } from 'src/app/core/services/data.service';
+import { DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-country',
@@ -19,54 +22,59 @@ export class CountryComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private dataService: DataService,
+    private destroyRef : DestroyRef,
   ) {}
 
-  ngOnInit() : void {
-    let countryId = 0;
-    this.route.paramMap.subscribe(
-      (param: ParamMap) => (countryId = Number(param.get('countryName'))),
-    );
-    this.dataService
-      .getCountryById(countryId)
-      .pipe()
-      .subscribe({
-        next: (data) => {
-          console.log(data);
+ngOnInit(): void {
+  this.route.paramMap
+    .pipe(
+      // Recherche le pays
+      switchMap(param => {
+        // TODO Routing country/:id
+        const rawId = param.get('countryName');
+        const countryId = rawId === null ? NaN : Number(rawId);
 
-          if (data !== undefined) {
-            const selectedCountry = data;
-            this.titlePage = selectedCountry.country;
-            const participations = selectedCountry?.participations.map(
-              (i: any) => i,
-            );
-            this.totalEntries = participations?.length ?? 0;
-            const years =
-              selectedCountry?.participations.map((i: any) => i.year) ?? [];
-            const medals =
-              selectedCountry?.participations.map((i: any) =>
-                i.medalsCount.toString(),
-              ) ?? [];
-            this.totalMedals = medals.reduce(
-              (accumulator: any, item: any) => accumulator + parseInt(item),
-              0,
-            );
-            const nbAthletes =
-              selectedCountry?.participations.map((i: any) =>
-                i.athleteCount.toString(),
-              ) ?? [];
-            this.totalAthletes = nbAthletes.reduce(
-              (accumulator: any, item: any) => accumulator + parseInt(item),
-              0,
-            );
-            this.buildChart(years, medals);
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.error = error.message;
-        },
-      });
+        // identifiant absent ou invalide.
+        if (!Number.isInteger(countryId) || countryId <= 0) {
+          return of(undefined);
+        }
+
+        return this.dataService.getCountryById(countryId);
+      }),
+
+      // Arrête l'abonnement quand on quitte la page
+      takeUntilDestroyed(this.destroyRef),
+    )
+    .subscribe({
+      next: country => {
+        if(country !== undefined){
+          this.titlePage = country.country;
+          const participations = country?.participations.map((i: any) => i);
+          this.totalEntries = participations?.length ?? 0;
+          const years = country?.participations.map((i: any) => i.year) ?? [];
+          const medals = country?.participations.map((i: any) => i.medalsCount.toString()) ?? [];
+          this.totalMedals = medals.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
+          const nbAthletes = country?.participations.map((i: any) => i.athleteCount.toString()) ?? []
+          this.totalAthletes = nbAthletes.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
+          this.buildChart(years, medals);
+        
+          this.buildChart(years, medals);
+        }
+          
+      },
+
+      // Une erreur HTTP
+      // TODO gestion de l'erreur
+      error: (error: HttpErrorResponse) => {
+        this.error = error.message;
+        console.error(error.message)
+      },
+    });
+}
+
+  ngOnDestroy(): void {
+    this.lineChart?.destroy();
   }
 
   buildChart(years: number[], medals: string[]) {
