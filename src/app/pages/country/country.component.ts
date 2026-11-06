@@ -57,7 +57,6 @@ ngOnInit(): void {
           this.totalMedals = medals.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
           const nbAthletes = country?.participations.map((i: any) => i.athleteCount.toString()) ?? []
           this.totalAthletes = nbAthletes.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
-          this.buildChart(years, medals);
         
           this.buildChart(years, medals);
         }
