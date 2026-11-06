@@ -29,10 +29,10 @@ export class CountryComponent implements OnInit {
 ngOnInit(): void {
   this.route.paramMap
     .pipe(
-      // Recherche le pays
+      // Recherche du pays par id
       switchMap(param => {
-        // TODO Routing country/:id
-        const rawId = param.get('countryName');
+      
+        const rawId = param.get('id');
         const countryId = rawId === null ? NaN : Number(rawId);
 
         // identifiant absent ou invalide.
