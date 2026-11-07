@@ -4,4 +4,8 @@
     <p role="alert">{{ error }}</p>
   </div>
 }
-<app-dashboard [kpiList]="kpiList" [chartId]="chartId"></app-dashboard>
+<app-dashboard
+  [kpiList]="kpiList"
+  [data]="data"
+  (countryId)="onCountryId($event)"
+></app-dashboard>
