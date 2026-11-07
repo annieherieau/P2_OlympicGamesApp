@@ -10,6 +10,7 @@ import { DashboardComponent } from 'src/app/components/dashboard/dashboard.compo
 import { Kpi } from 'src/app/core/models/Kpi';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
+import { Participation } from 'src/app/core/models/participation.model';
 
 type ChartData = {
   ids: number[];
@@ -28,7 +29,7 @@ export class HomeComponent implements AfterViewInit {
   public pieChart!: Chart<'pie', number[], string>;
   public chartId: string = 'DashboardPieChart';
   public kpiList: Kpi[] = [];
-  public countries: string[] = []
+  public countries: string[] = [];
   public totalCountries: number = 0;
   public label1 = 'Number of countries';
   public totalJOs: number = 0;
@@ -54,20 +55,20 @@ export class HomeComponent implements AfterViewInit {
         next: (data) => {
           // Supprime le graphique précédent
           this.pieChart?.destroy();
-          
+
           if (data.length > 0) {
-            
-            const countries: string[] = data.map((i: any) => i.country);
-            const ids: number[] = data.map((i: any) => i.id);
+            const countries: string[] = data.map((i: Olympic) => i.country);
+            const ids: number[] = data.map((i: Olympic) => i.id);
 
             this.buildKpiList(data);
 
-            const medals = data.map((i: any) =>
-              i.participations.map((i: any) => i.medalsCount),
+            const medals = data.map((i: Olympic) =>
+              i.participations.map((i: Participation) => i.medalsCount),
             );
             const sumOfAllMedalsYears = medals.map((i) =>
-              i.reduce((acc: any, i: any) => acc + i, 0),
+              i.reduce((acc: number, i: number) => acc + i, 0),
             );
+
             const chartData = {
               ids: ids,
               labels: countries,
@@ -132,11 +133,15 @@ export class HomeComponent implements AfterViewInit {
   }
 
   buildKpiList(data: Olympic[]): void {
-    const countries: string[] = data.map((i: any) => i.country);
+    const countries: string[] = data.map((i: Olympic) => i.country);
     // KPIs
     this.totalJOs = Array.from(
       new Set(
-        data.map((i: any) => i.participations.map((f: any) => f.year)).flat(),
+        data
+          .map((i: Olympic) =>
+            i.participations.map((f: Participation) => f.year),
+          )
+          .flat(),
       ),
     ).length;
     this.totalCountries = countries.length;
