@@ -60,11 +60,9 @@ export class CountryComponent implements AfterViewInit {
           // Supprime les données précédentes (garph / Kpis)
           this.ngOnDestroy();
 
-          // Pays inexistant
+          // Pays inexistant => Page not found
           if (country === undefined) {
-            this.error = 'Country not found.';
-            // Todo trabnsmettre el'erreur
-            this.router.navigate(['not-found']);
+            this.router.navigate(['/not-found', 'Country not found']);
             return;
           }
 
@@ -77,7 +75,6 @@ export class CountryComponent implements AfterViewInit {
         },
 
         // Une erreur HTTP
-        // TODO gestion de l'erreur
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
         },
