@@ -38,6 +38,8 @@ export class HomeComponent implements OnInit {
       )
       .subscribe({
         next: (data) => {
+          // Supprime le graphique précédent
+          this.ngOnDestroy();
           console.log('Liste des données :', data);
           if (data.length > 0) {
             this.totalJOs = Array.from(
@@ -56,7 +58,11 @@ export class HomeComponent implements OnInit {
             const sumOfAllMedalsYears = medals.map((i) =>
               i.reduce((acc: any, i: any) => acc + i, 0),
             );
-            const chartData = {ids: ids, labels: countries, sumOfAllMedalsYears: sumOfAllMedalsYears}
+            const chartData = {
+              ids: ids,
+              labels: countries,
+              sumOfAllMedalsYears: sumOfAllMedalsYears,
+            };
             this.buildPieChart(chartData);
           }
         },
@@ -70,7 +76,7 @@ export class HomeComponent implements OnInit {
     this.pieChart?.destroy();
   }
 
-  buildPieChart(data : ChartData) {
+  buildPieChart(data: ChartData) {
     const ids = data.ids;
     const pieChart = new Chart('DashboardPieChart', {
       type: 'pie',
@@ -104,10 +110,8 @@ export class HomeComponent implements OnInit {
             );
             if (points.length) {
               const firstPoint = points[0];
-              const id = ids
-                ? ids[firstPoint.index]
-                : '';
-          
+              const id = ids ? ids[firstPoint.index] : '';
+
               this.router.navigate(['country', id]);
             }
           }

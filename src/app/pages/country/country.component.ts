@@ -48,10 +48,13 @@ export class CountryComponent implements OnInit {
       )
       .subscribe({
         next: (country) => {
+          // Supprime le graphique précédent avant d'afficher un autre pays.
+          this.ngOnDestroy();
+
           if (country === undefined) {
             this.router.navigate(['not-found']);
           }
-          
+
           this.titlePage = country ? country.country : '';
           const participations = country?.participations.map((i: any) => i);
           this.totalEntries = participations?.length ?? 0;
