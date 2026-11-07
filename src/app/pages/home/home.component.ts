@@ -56,6 +56,7 @@ export class HomeComponent implements AfterViewInit {
           this.pieChart?.destroy();
           
           if (data.length > 0) {
+            
             const countries: string[] = data.map((i: any) => i.country);
             const ids: number[] = data.map((i: any) => i.id);
 
@@ -87,7 +88,7 @@ export class HomeComponent implements AfterViewInit {
 
   buildPieChart(data: ChartData) {
     const ids = data.ids;
-    const pieChart = new Chart('DashboardPieChart', {
+    const pieChart = new Chart(this.chartId, {
       type: 'pie',
       data: {
         labels: data.labels,
