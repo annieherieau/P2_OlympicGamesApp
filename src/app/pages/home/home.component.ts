@@ -54,11 +54,11 @@ export class HomeComponent implements AfterViewInit {
             this.buildPieChart();
           } else {
             // TODO l'afficher quelque part
-            this.error = 'No olympic data';
+            this.error = 'No Olympic data found';
           }
         },
         error: (error: HttpErrorResponse) => {
-          this.error = error.message;
+          this.error = error.message ;
         },
       });
   }
