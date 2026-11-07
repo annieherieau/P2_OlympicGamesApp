@@ -1,20 +1,27 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { DataService } from 'src/app/core/services/data.service';
-import { DestroyRef, inject } from '@angular/core';
+import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { of, switchMap } from 'rxjs';
+import { asapScheduler, observeOn, of, switchMap } from 'rxjs';
+import { HeaderComponent } from 'src/app/components/header/header.component';
+import { RouterLink } from '@angular/router';
+import { Kpi } from 'src/app/core/models/Kpi';
+import { ButtonComponent } from 'src/app/components/button/button.component';
 
 @Component({
   selector: 'app-country',
+  standalone: true,
+  imports: [HeaderComponent, RouterLink, ButtonComponent],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })
-export class CountryComponent implements OnInit {
+export class CountryComponent implements AfterViewInit {
   public lineChart!: Chart<'line', string[], number>;
   public titlePage: string = '';
+  public kpiList : Kpi[] = [];
   public totalEntries: any = 0;
   public totalMedals: number = 0;
   public totalAthletes: number = 0;
@@ -27,7 +34,7 @@ export class CountryComponent implements OnInit {
     private destroyRef: DestroyRef,
   ) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.route.paramMap
       .pipe(
         // Recherche du pays par id
@@ -43,16 +50,19 @@ export class CountryComponent implements OnInit {
           return this.dataService.getCountryById(countryId);
         }),
 
+        // Diffère aussi les données en cache après la vérification de la vue.
+        observeOn(asapScheduler),
         // Arrête l'abonnement quand on quitte la page
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (country) => {
           // Supprime le graphique précédent avant d'afficher un autre pays.
-          this.ngOnDestroy();
+          this.lineChart?.destroy();
 
           if (country === undefined) {
             this.router.navigate(['not-found']);
+            return;
           }
 
           this.titlePage = country ? country.country : '';
@@ -108,5 +118,9 @@ export class CountryComponent implements OnInit {
       },
     });
     this.lineChart = lineChart;
+  }
+
+  buildKpiList(): void{
+
   }
 }

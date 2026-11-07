@@ -1,0 +1,7 @@
+<div>
+  <div class="split">
+    @for (kpi of kpiList; track $index) {
+      <app-kpi [kpi]="kpi"></app-kpi>
+    }
+  </div>
+</div>

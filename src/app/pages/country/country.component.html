@@ -1,8 +1,6 @@
+<app-header [titlePage]="titlePage"></app-header>
 <div>
   <div>
-    <div class="center">
-      <div>{{ titlePage }}</div>
-    </div>
     <div class="split">
       <div>
         <p>Number of entries</p>
@@ -18,21 +16,11 @@
       </div>
     </div>
   </div>
-  <div class="chart-container wrapper-container">
-    <div class="container">
-      <canvas id="countryChart">{{ lineChart }}</canvas>
-      <h2>Date</h2>
-    </div>
-  </div>
-  <!-- TODO à supprimer -->
-  <div class="center">
-    <a routerLink="/country/1">country 1</a>
+  
+  <div class="chart-container">
+    <canvas id="countryChart"></canvas>
   </div>
   <div class="center">
-    <a routerLink="/country/2">country 2</a>
-  </div>
-  <!-- fin TODO à supprimer -->
-  <div class="center">
-    <a routerLink="">Go back</a>
+    <app-button label="Go back" link="/"></app-button>
   </div>
 </div>

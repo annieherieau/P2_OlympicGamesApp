@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { HeaderComponent } from 'src/app/components/header/header.component';
+import { ButtonComponent } from 'src/app/components/button/button.component';
 
 @Component({
   selector: 'app-not-found',
+  standalone: true,
+  imports: [HeaderComponent, RouterLink, ButtonComponent],
   templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.scss']
+  styleUrls: ['./not-found.component.scss'],
 })
 export class NotFoundComponent {
-
-  constructor() { }
-
+  titlePage: string = 'Page not Found';
+  constructor() {}
 }
