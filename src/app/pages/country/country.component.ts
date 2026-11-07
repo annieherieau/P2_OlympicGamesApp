@@ -7,21 +7,23 @@ import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { asapScheduler, observeOn, of, switchMap } from 'rxjs';
 import { HeaderComponent } from 'src/app/components/header/header.component';
-import { RouterLink } from '@angular/router';
 import { Kpi } from 'src/app/core/models/Kpi';
 import { ButtonComponent } from 'src/app/components/button/button.component';
+import { CountryDetailComponent } from 'src/app/components/country-detail/country-detail.component';
+import { Participation } from 'src/app/core/models/participation.model';
 
 @Component({
   selector: 'app-country',
   standalone: true,
-  imports: [HeaderComponent, RouterLink, ButtonComponent],
+  imports: [HeaderComponent, ButtonComponent, CountryDetailComponent],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })
 export class CountryComponent implements AfterViewInit {
   public lineChart!: Chart<'line', string[], number>;
   public titlePage: string = '';
-  public kpiList : Kpi[] = [];
+  public chartId: string = 'countryChart';
+  public kpiList: Kpi[] = [];
   public totalEntries: any = 0;
   public totalMedals: number = 0;
   public totalAthletes: number = 0;
@@ -68,23 +70,23 @@ export class CountryComponent implements AfterViewInit {
           this.titlePage = country ? country.country : '';
           const participations = country?.participations.map((i: any) => i);
           this.totalEntries = participations?.length ?? 0;
-          const years = country?.participations.map((i: any) => i.year) ?? [];
+          const years = participations?.map((i: any) => i.year) ?? [];
           const medals =
-            country?.participations.map((i: any) => i.medalsCount.toString()) ??
+            participations?.map((i: any) => i.medalsCount.toString()) ??
             [];
           this.totalMedals = medals.reduce(
             (accumulator: any, item: any) => accumulator + parseInt(item),
             0,
           );
           const nbAthletes =
-            country?.participations.map((i: any) =>
+            participations?.map((i: any) =>
               i.athleteCount.toString(),
             ) ?? [];
           this.totalAthletes = nbAthletes.reduce(
             (accumulator: any, item: any) => accumulator + parseInt(item),
             0,
           );
-
+          this.buildKpiList(participations);
           this.buildChart(years, medals);
         },
 
@@ -101,7 +103,7 @@ export class CountryComponent implements AfterViewInit {
   }
 
   buildChart(years: number[], medals: string[]) {
-    const lineChart = new Chart('countryChart', {
+    const lineChart = new Chart(this.chartId, {
       type: 'line',
       data: {
         labels: years,
@@ -120,7 +122,9 @@ export class CountryComponent implements AfterViewInit {
     this.lineChart = lineChart;
   }
 
-  buildKpiList(): void{
-
+  buildKpiList(participations: Participation[]): void {
+    this.kpiList.push({ label: 'Number of entries', value: this.totalEntries });
+    this.kpiList.push({ label: 'Total Number of medals', value: this.totalMedals });
+    this.kpiList.push({ label: 'Total Number of athletes', value: this.totalAthletes });
   }
 }
