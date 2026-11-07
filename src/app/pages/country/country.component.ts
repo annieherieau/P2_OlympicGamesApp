@@ -24,7 +24,7 @@ export class CountryComponent implements AfterViewInit {
   public titlePage: string = '';
   public chartId: string = 'countryChart';
   public kpiList: Kpi[] = [];
-  public totalEntries: any = 0;
+  public totalEntries: number = 0;
   public totalMedals: number = 0;
   public totalAthletes: number = 0;
   public error!: string;
@@ -68,22 +68,23 @@ export class CountryComponent implements AfterViewInit {
           }
 
           this.titlePage = country ? country.country : '';
-          const participations = country?.participations.map((i: any) => i);
+          const participations = country?.participations.map((i: Participation) => i);
           this.totalEntries = participations?.length ?? 0;
-          const years = participations?.map((i: any) => i.year) ?? [];
+          const years = participations?.map((i: Participation) => i.year) ?? [];
           const medals =
-            participations?.map((i: any) => i.medalsCount.toString()) ??
+            participations?.map((i: Participation) => i.medalsCount.toString()) ??
             [];
           this.totalMedals = medals.reduce(
-            (accumulator: any, item: any) => accumulator + parseInt(item),
+            (accumulator: number, item: string) => accumulator + parseInt(item),
             0,
           );
           const nbAthletes =
-            participations?.map((i: any) =>
+            participations?.map((i: Participation) =>
               i.athleteCount.toString(),
             ) ?? [];
+            console.log(nbAthletes);
           this.totalAthletes = nbAthletes.reduce(
-            (accumulator: any, item: any) => accumulator + parseInt(item),
+            (accumulator: number, item: string) => accumulator + parseInt(item),
             0,
           );
           this.buildKpiList(participations);
