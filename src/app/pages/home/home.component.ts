@@ -11,12 +11,6 @@ import { Kpi } from 'src/app/core/models/Kpi';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
 
-type ChartData = {
-  ids: number[];
-  labels: string[];
-  sumOfAllMedalsYears: number[];
-};
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -25,15 +19,12 @@ type ChartData = {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements AfterViewInit {
-  public pieChart!: Chart<'pie', number[], string>;
+  public titlePage: string = 'Medals per Country';
+  private pieChart!: Chart<'pie', number[], string>;
   public chartId: string = 'DashboardPieChart';
   public kpiList: Kpi[] = [];
-  public countries: string[] = []
-  public totalCountries: number = 0;
-  public label1 = 'Number of countries';
-  public totalJOs: number = 0;
+  private data: Olympic[] = [];
   public error!: string;
-  titlePage: string = 'Medals per Country';
 
   constructor(
     private router: Router,
@@ -52,28 +43,18 @@ export class HomeComponent implements AfterViewInit {
       )
       .subscribe({
         next: (data) => {
-          // Supprime le graphique précédent
-          this.pieChart?.destroy();
-          
+          // Supprime les données précédentes (garph / Kpis)
+          this.ngOnDestroy();
+
           if (data.length > 0) {
-            
-            const countries: string[] = data.map((i: any) => i.country);
-            const ids: number[] = data.map((i: any) => i.id);
+            this.error = '';
+            this.data = data;
 
-            this.buildKpiList(data);
-
-            const medals = data.map((i: any) =>
-              i.participations.map((i: any) => i.medalsCount),
-            );
-            const sumOfAllMedalsYears = medals.map((i) =>
-              i.reduce((acc: any, i: any) => acc + i, 0),
-            );
-            const chartData = {
-              ids: ids,
-              labels: countries,
-              sumOfAllMedalsYears: sumOfAllMedalsYears,
-            };
-            this.buildPieChart(chartData);
+            this.buildKpiList();
+            this.buildPieChart();
+          } else {
+            // TODO l'afficher quelque part
+            this.error = 'No olympic data';
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -84,18 +65,28 @@ export class HomeComponent implements AfterViewInit {
 
   ngOnDestroy(): void {
     this.pieChart?.destroy();
+    this.data = [];
   }
 
-  buildPieChart(data: ChartData) {
-    const ids = data.ids;
-    const pieChart = new Chart(this.chartId, {
+  private buildPieChart() : void{
+    const labels = this.data.map((country) => country.country);
+    const sumOfAllMedalsYears = this.data.map((country) =>
+      country.participations.reduce(
+        (total, participation) => total + participation.medalsCount,
+        0,
+      ),
+    );
+
+    const ids = this.data.map((country) => country.id);
+
+    this.pieChart = new Chart(this.chartId, {
       type: 'pie',
       data: {
-        labels: data.labels,
+        labels: labels,
         datasets: [
           {
             label: 'Medals',
-            data: data.sumOfAllMedalsYears,
+            data: sumOfAllMedalsYears,
             backgroundColor: [
               '#0b868f',
               '#adc3de',
@@ -112,7 +103,7 @@ export class HomeComponent implements AfterViewInit {
         aspectRatio: 2.5,
         onClick: (e) => {
           if (e.native) {
-            const points = pieChart.getElementsAtEventForMode(
+            const points = this.pieChart.getElementsAtEventForMode(
               e.native,
               'point',
               { intersect: true },
@@ -120,7 +111,7 @@ export class HomeComponent implements AfterViewInit {
             );
             if (points.length) {
               const firstPoint = points[0];
-              const id = ids ? ids[firstPoint.index] : '';
+              const id = ids[firstPoint.index];
 
               this.router.navigate(['country', id]);
             }
@@ -128,23 +119,15 @@ export class HomeComponent implements AfterViewInit {
         },
       },
     });
-    this.pieChart = pieChart;
   }
 
-  buildKpiList(data: Olympic[]): void {
-    const countries: string[] = data.map((i: any) => i.country);
-    // KPIs
-    this.totalJOs = Array.from(
-      new Set(
-        data.map((i: any) => i.participations.map((f: any) => f.year)).flat(),
-      ),
-    ).length;
-    this.totalCountries = countries.length;
-
-    this.kpiList.push({
-      label: 'Number of countries',
-      value: this.totalCountries,
-    });
-    this.kpiList.push({ label: 'Number of JOs', value: this.totalJOs });
+  private buildKpiList(): void {
+    const years = this.data.flatMap((country) =>
+      country.participations.map((participation) => participation.year),
+    );
+    this.kpiList = [
+      { label: 'Number of countries', value: this.data.length },
+      { label: 'Number of JOs', value: new Set(years).size },
+    ];
   }
 }
