@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, map, shareReplay } from 'rxjs';
 import { Olympic } from '../models/olympic.model';
 
 /**
- * Centralise l'accès aux données et partage les données 
+ * Centralise l'accès aux données et partage les données
  * chargées entre les pages.
  *
  */
@@ -15,25 +15,45 @@ export class DataService {
   /** Observable partagé contenant les données des pays.  */
   private readonly countries$: Observable<Olympic[]>;
 
- /**
- * Prépare le chargement des données, déclenché au premier abonnement.
- * shareReplay partage la requête entre les abonnés et conserve la réponse
- * pour les prochains abonnements après un chargement réussi.
- * 
- * @param http Client HTTP Angular
- */
-constructor(private readonly http: HttpClient) {
-  this.countries$ = this.http.get<Olympic[]>(this.olympicUrl).pipe(
-    shareReplay({ bufferSize: 1, refCount: true })
-  );
-}
+  /**
+   * Prépare le chargement des données, déclenché au premier abonnement.
+   * shareReplay partage la requête entre les abonnés et conserve la réponse
+   * pour les prochains abonnements après un chargement réussi.
+   *
+   * @param http Client HTTP Angular
+   */
+  constructor(
+    private readonly http: HttpClient,
+    // pour le tri des connées
+    @Inject(LOCALE_ID) private readonly locale: string,
+  ) {
+    this.countries$ = this.http
+      .get<Olympic[]>(this.olympicUrl)
+      .pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  }
 
   /**
-   * Renvoie les données de tous les pays
+   * Renvoie les données de tous les pays, tri alphabétique
+   * selon la langue de l'appli
    * @returns un Observable contenant la liste des pays
    */
   getCountries(): Observable<Olympic[]> {
-    return this.countries$;
+    return this.countries$.pipe(
+      map((countries) =>
+        [...countries].sort((a, b) => {
+          const first = a.country?.trim() || null;
+          const second = b.country?.trim() || null;
+
+          if (first === null && second === null) return 0;
+          if (first === null) return 1;
+          if (second === null) return -1;
+
+          return first.localeCompare(second, this.locale, {
+            sensitivity: 'base',
+          });
+        }),
+      ),
+    );
   }
 
   /**
