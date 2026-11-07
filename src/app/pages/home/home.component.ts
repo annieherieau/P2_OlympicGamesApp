@@ -6,6 +6,11 @@ import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+type ChartData = {
+  ids: number[];
+  labels: string[];
+  sumOfAllMedalsYears: number[];
+};
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -33,6 +38,8 @@ export class HomeComponent implements OnInit {
       )
       .subscribe({
         next: (data) => {
+          // Supprime le graphique précédent
+          this.ngOnDestroy();
           console.log('Liste des données :', data);
           if (data.length > 0) {
             this.totalJOs = Array.from(
@@ -43,6 +50,7 @@ export class HomeComponent implements OnInit {
               ),
             ).length;
             const countries: string[] = data.map((i: any) => i.country);
+            const ids: number[] = data.map((i: any) => i.id);
             this.totalCountries = countries.length;
             const medals = data.map((i: any) =>
               i.participations.map((i: any) => i.medalsCount),
@@ -50,7 +58,12 @@ export class HomeComponent implements OnInit {
             const sumOfAllMedalsYears = medals.map((i) =>
               i.reduce((acc: any, i: any) => acc + i, 0),
             );
-            this.buildPieChart(countries, sumOfAllMedalsYears);
+            const chartData = {
+              ids: ids,
+              labels: countries,
+              sumOfAllMedalsYears: sumOfAllMedalsYears,
+            };
+            this.buildPieChart(chartData);
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -63,15 +76,16 @@ export class HomeComponent implements OnInit {
     this.pieChart?.destroy();
   }
 
-  buildPieChart(countries: string[], sumOfAllMedalsYears: number[]) {
+  buildPieChart(data: ChartData) {
+    const ids = data.ids;
     const pieChart = new Chart('DashboardPieChart', {
       type: 'pie',
       data: {
-        labels: countries,
+        labels: data.labels,
         datasets: [
           {
             label: 'Medals',
-            data: sumOfAllMedalsYears,
+            data: data.sumOfAllMedalsYears,
             backgroundColor: [
               '#0b868f',
               '#adc3de',
@@ -96,10 +110,9 @@ export class HomeComponent implements OnInit {
             );
             if (points.length) {
               const firstPoint = points[0];
-              const countryName = pieChart.data.labels
-                ? pieChart.data.labels[firstPoint.index]
-                : '';
-              this.router.navigate(['country', countryName]);
+              const id = ids ? ids[firstPoint.index] : '';
+
+              this.router.navigate(['country', id]);
             }
           }
         },

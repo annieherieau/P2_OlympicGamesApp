@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef, inject } from '@angular/core';
@@ -22,55 +22,69 @@ export class CountryComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private dataService: DataService,
-    private destroyRef : DestroyRef,
+    private destroyRef: DestroyRef,
   ) {}
 
-ngOnInit(): void {
-  this.route.paramMap
-    .pipe(
-      // Recherche le pays
-      switchMap(param => {
-        // TODO Routing country/:id
-        const rawId = param.get('countryName');
-        const countryId = rawId === null ? NaN : Number(rawId);
+  ngOnInit(): void {
+    this.route.paramMap
+      .pipe(
+        // Recherche du pays par id
+        switchMap((param) => {
+          const rawId = param.get('id');
+          const countryId = rawId === null ? NaN : Number(rawId);
 
-        // identifiant absent ou invalide.
-        if (!Number.isInteger(countryId) || countryId <= 0) {
-          return of(undefined);
-        }
+          // identifiant absent ou invalide.
+          if (!Number.isInteger(countryId) || countryId <= 0) {
+            return of(undefined);
+          }
 
-        return this.dataService.getCountryById(countryId);
-      }),
+          return this.dataService.getCountryById(countryId);
+        }),
 
-      // Arrête l'abonnement quand on quitte la page
-      takeUntilDestroyed(this.destroyRef),
-    )
-    .subscribe({
-      next: country => {
-        if(country !== undefined){
-          this.titlePage = country.country;
+        // Arrête l'abonnement quand on quitte la page
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (country) => {
+          // Supprime le graphique précédent avant d'afficher un autre pays.
+          this.ngOnDestroy();
+
+          if (country === undefined) {
+            this.router.navigate(['not-found']);
+          }
+
+          this.titlePage = country ? country.country : '';
           const participations = country?.participations.map((i: any) => i);
           this.totalEntries = participations?.length ?? 0;
           const years = country?.participations.map((i: any) => i.year) ?? [];
-          const medals = country?.participations.map((i: any) => i.medalsCount.toString()) ?? [];
-          this.totalMedals = medals.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
-          const nbAthletes = country?.participations.map((i: any) => i.athleteCount.toString()) ?? []
-          this.totalAthletes = nbAthletes.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
-        
-          this.buildChart(years, medals);
-        }
-          
-      },
+          const medals =
+            country?.participations.map((i: any) => i.medalsCount.toString()) ??
+            [];
+          this.totalMedals = medals.reduce(
+            (accumulator: any, item: any) => accumulator + parseInt(item),
+            0,
+          );
+          const nbAthletes =
+            country?.participations.map((i: any) =>
+              i.athleteCount.toString(),
+            ) ?? [];
+          this.totalAthletes = nbAthletes.reduce(
+            (accumulator: any, item: any) => accumulator + parseInt(item),
+            0,
+          );
 
-      // Une erreur HTTP
-      // TODO gestion de l'erreur
-      error: (error: HttpErrorResponse) => {
-        this.error = error.message;
-        console.error(error.message)
-      },
-    });
-}
+          this.buildChart(years, medals);
+        },
+
+        // Une erreur HTTP
+        // TODO gestion de l'erreur
+        error: (error: HttpErrorResponse) => {
+          this.error = error.message;
+        },
+      });
+  }
 
   ngOnDestroy(): void {
     this.lineChart?.destroy();
