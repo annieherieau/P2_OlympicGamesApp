@@ -20,13 +20,11 @@ import { Participation } from 'src/app/core/models/participation.model';
   styleUrls: ['./country.component.scss'],
 })
 export class CountryComponent implements AfterViewInit {
-  public lineChart!: Chart<'line', string[], number>;
   public titlePage: string = '';
-  public chartId: string = 'countryChart';
+  private participations: Participation[] = [];
   public kpiList: Kpi[] = [];
-  public totalEntries: any = 0;
-  public totalMedals: number = 0;
-  public totalAthletes: number = 0;
+  private lineChart!: Chart<'line', number[], number>;
+  public chartId: string = 'countryChart';
   public error!: string;
 
   constructor(
@@ -59,35 +57,23 @@ export class CountryComponent implements AfterViewInit {
       )
       .subscribe({
         next: (country) => {
-          // Supprime le graphique précédent avant d'afficher un autre pays.
-          this.lineChart?.destroy();
+          // Supprime les données précédentes (garph / Kpis)
+          this.ngOnDestroy();
 
+          // Pays inexistant
           if (country === undefined) {
+            this.error = 'Country not found.';
+            // Todo trabnsmettre el'erreur
             this.router.navigate(['not-found']);
             return;
           }
 
-          this.titlePage = country ? country.country : '';
-          const participations = country?.participations.map((i: any) => i);
-          this.totalEntries = participations?.length ?? 0;
-          const years = participations?.map((i: any) => i.year) ?? [];
-          const medals =
-            participations?.map((i: any) => i.medalsCount.toString()) ??
-            [];
-          this.totalMedals = medals.reduce(
-            (accumulator: any, item: any) => accumulator + parseInt(item),
-            0,
-          );
-          const nbAthletes =
-            participations?.map((i: any) =>
-              i.athleteCount.toString(),
-            ) ?? [];
-          this.totalAthletes = nbAthletes.reduce(
-            (accumulator: any, item: any) => accumulator + parseInt(item),
-            0,
-          );
-          this.buildKpiList(participations);
-          this.buildChart(years, medals);
+          this.error = '';
+          this.titlePage = country.country;
+          this.participations = country.participations;
+
+          this.buildKpiList();
+          this.buildChart();
         },
 
         // Une erreur HTTP
@@ -100,10 +86,14 @@ export class CountryComponent implements AfterViewInit {
 
   ngOnDestroy(): void {
     this.lineChart?.destroy();
+    this.kpiList = [];
   }
 
-  buildChart(years: number[], medals: string[]) {
-    const lineChart = new Chart(this.chartId, {
+  private buildChart(): void {
+    const years = this.participations.map(({ year }) => year);
+    const medals = this.participations.map(({ medalsCount }) => medalsCount);
+
+    this.lineChart = new Chart(this.chartId, {
       type: 'line',
       data: {
         labels: years,
@@ -119,12 +109,22 @@ export class CountryComponent implements AfterViewInit {
         aspectRatio: 2.5,
       },
     });
-    this.lineChart = lineChart;
   }
 
-  buildKpiList(participations: Participation[]): void {
-    this.kpiList.push({ label: 'Number of entries', value: this.totalEntries });
-    this.kpiList.push({ label: 'Total Number of medals', value: this.totalMedals });
-    this.kpiList.push({ label: 'Total Number of athletes', value: this.totalAthletes });
+  private buildKpiList(): void {
+    const totalMedals = this.participations.reduce(
+      (total, participation) => total + participation.medalsCount,
+      0,
+    );
+
+    const totalAthletes = this.participations.reduce(
+      (total, participation) => total + participation.athleteCount,
+      0,
+    );
+    this.kpiList = [
+      { label: 'Number of entries', value: this.participations.length },
+      { label: 'Total Number of medals', value: totalMedals },
+      { label: 'Total Number of athletes', value: totalAthletes },
+    ];
   }
 }
