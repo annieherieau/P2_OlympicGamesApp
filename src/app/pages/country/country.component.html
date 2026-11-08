@@ -1,17 +1,27 @@
 <app-header [titlePage]="titlePage"></app-header>
+@switch (state) {
+  @case ("loading") {
+    <p role="status">Loading...</p>
+  }
 
-@if (error) {
-  <div>
-    <p role="alert">{{ error }}</p>
-  </div>
+  @case ("empty") {
+    <p>No data.</p>
+  }
+
+  @case ("error") {
+    <app-error [error]="error"></app-error>
+  }
+
+  @case ("success") {
+    <div>
+      <app-country-detail
+        [kpiList]="kpiList"
+        [data]="data"
+      ></app-country-detail>
+    </div>
+  }
 }
-<div>
-  <app-country-detail
-    [kpiList]="kpiList"
-    [data]="data"
-  ></app-country-detail>
-  <div class="center">
-    <app-button label="Go back" link="/"></app-button>
-    <app-button label="italy" link="/country/1"></app-button>
-  </div>
+<div class="center">
+  <app-button label="Go back" link="/"></app-button>
+  <app-button label="italy" link="/country/1"></app-button>
 </div>
