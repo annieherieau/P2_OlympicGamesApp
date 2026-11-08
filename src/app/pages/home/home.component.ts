@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import Chart from 'chart.js/auto';
 import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,10 +19,8 @@ import { asapScheduler, observeOn } from 'rxjs';
 })
 export class HomeComponent implements AfterViewInit {
   public titlePage: string = 'Medals per Country';
-  private pieChart!: Chart<'pie', number[], string>;
-  public chartId: string = 'DashboardPieChart';
   public kpiList: Kpi[] = [];
-  private data: Olympic[] = [];
+  public data: Olympic[] = [];
   public error!: string;
 
   constructor(
@@ -43,19 +40,14 @@ export class HomeComponent implements AfterViewInit {
       )
       .subscribe({
         next: (data) => {
-          // Supprime les données précédentes (garph / Kpis)
-          this.ngOnDestroy();
 
-          if (data.length > 0) {
-            this.error = '';
-            this.data = data;
-
-            this.buildKpiList();
-            this.buildPieChart();
-          } else {
-            // TODO l'afficher quelque part
-            this.error = 'No olympic data';
+          if (data.length === 0) {
+            this.error = 'No Olympic data found';
+            return;
           }
+          this.error = '';
+          this.data = data;
+          this.buildKpiList();
         },
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
@@ -63,62 +55,9 @@ export class HomeComponent implements AfterViewInit {
       });
   }
 
-  ngOnDestroy(): void {
-    this.pieChart?.destroy();
-    this.data = [];
-  }
-
-  private buildPieChart() : void{
-    const labels = this.data.map((country) => country.country);
-    const sumOfAllMedalsYears = this.data.map((country) =>
-      country.participations.reduce(
-        (total, participation) => total + participation.medalsCount,
-        0,
-      ),
-    );
-
-    const ids = this.data.map((country) => country.id);
-
-    this.pieChart = new Chart(this.chartId, {
-      type: 'pie',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Medals',
-            data: sumOfAllMedalsYears,
-            backgroundColor: [
-              '#0b868f',
-              '#adc3de',
-              '#7a3c53',
-              '#8f6263',
-              'orange',
-              '#94819d',
-            ],
-            hoverOffset: 4,
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-        onClick: (e) => {
-          if (e.native) {
-            const points = this.pieChart.getElementsAtEventForMode(
-              e.native,
-              'point',
-              { intersect: true },
-              true,
-            );
-            if (points.length) {
-              const firstPoint = points[0];
-              const id = ids[firstPoint.index];
-
-              this.router.navigate(['country', id]);
-            }
-          }
-        },
-      },
-    });
+  // Ouvre la page du pays sélectionné dans le graphique.
+  onCountryId(id: number): void {
+    this.router.navigate(['/country', id]);
   }
 
   private buildKpiList(): void {

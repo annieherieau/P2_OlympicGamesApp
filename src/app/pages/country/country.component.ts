@@ -21,10 +21,8 @@ import { Participation } from 'src/app/core/models/participation.model';
 })
 export class CountryComponent implements AfterViewInit {
   public titlePage: string = '';
-  private participations: Participation[] = [];
+  public data: Participation[] = [];
   public kpiList: Kpi[] = [];
-  private lineChart!: Chart<'line', number[], number>;
-  public chartId: string = 'countryChart';
   public error!: string;
 
   constructor(
@@ -57,72 +55,39 @@ export class CountryComponent implements AfterViewInit {
       )
       .subscribe({
         next: (country) => {
-          // Supprime les données précédentes (garph / Kpis)
-          this.ngOnDestroy();
 
-          // Pays inexistant
+          // Pays inexistant => Page not found
           if (country === undefined) {
-            this.error = 'Country not found.';
-            // Todo trabnsmettre el'erreur
-            this.router.navigate(['not-found']);
+            this.router.navigate(['/not-found', 'Country not found']);
             return;
           }
 
           this.error = '';
           this.titlePage = country.country;
-          this.participations = country.participations;
+          this.data = country.participations;
 
           this.buildKpiList();
-          this.buildChart();
         },
 
         // Une erreur HTTP
-        // TODO gestion de l'erreur
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
         },
       });
   }
 
-  ngOnDestroy(): void {
-    this.lineChart?.destroy();
-    this.kpiList = [];
-  }
-
-  private buildChart(): void {
-    const years = this.participations.map(({ year }) => year);
-    const medals = this.participations.map(({ medalsCount }) => medalsCount);
-
-    this.lineChart = new Chart(this.chartId, {
-      type: 'line',
-      data: {
-        labels: years,
-        datasets: [
-          {
-            label: 'medals',
-            data: medals,
-            backgroundColor: '#0b868f',
-          },
-        ],
-      },
-      options: {
-        aspectRatio: 2.5,
-      },
-    });
-  }
-
   private buildKpiList(): void {
-    const totalMedals = this.participations.reduce(
+    const totalMedals = this.data.reduce(
       (total, participation) => total + participation.medalsCount,
       0,
     );
 
-    const totalAthletes = this.participations.reduce(
+    const totalAthletes = this.data.reduce(
       (total, participation) => total + participation.athleteCount,
       0,
     );
     this.kpiList = [
-      { label: 'Number of entries', value: this.participations.length },
+      { label: 'Number of entries', value: this.data.length },
       { label: 'Total Number of medals', value: totalMedals },
       { label: 'Total Number of athletes', value: totalAthletes },
     ];
