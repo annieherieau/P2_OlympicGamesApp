@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import Chart from 'chart.js/auto';
 import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,11 +10,20 @@ import { Kpi } from 'src/app/core/models/Kpi';
 import { ButtonComponent } from 'src/app/components/button/button.component';
 import { CountryDetailComponent } from 'src/app/components/country-detail/country-detail.component';
 import { Participation } from 'src/app/core/models/participation.model';
+import { PageState } from 'src/app/core/models/page-state';
+import { ErrorComponent } from 'src/app/components/error/error.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-country',
   standalone: true,
-  imports: [HeaderComponent, ButtonComponent, CountryDetailComponent],
+  imports: [
+    HeaderComponent,
+    ButtonComponent,
+    CountryDetailComponent,
+    ErrorComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })
@@ -24,6 +32,7 @@ export class CountryComponent implements AfterViewInit {
   public data: Participation[] = [];
   public kpiList: Kpi[] = [];
   public error!: string;
+  public state: PageState = 'loading';
 
   constructor(
     private route: ActivatedRoute,
@@ -55,7 +64,6 @@ export class CountryComponent implements AfterViewInit {
       )
       .subscribe({
         next: (country) => {
-
           // Pays inexistant => Page not found
           if (country === undefined) {
             this.router.navigate(['/not-found', 'Country not found']);
@@ -66,12 +74,19 @@ export class CountryComponent implements AfterViewInit {
           this.titlePage = country.country;
           this.data = country.participations;
 
+          // données vides
+          if (this.data.length === 0) {
+            this.state = 'empty';
+            return;
+          }
           this.buildKpiList();
+          this.state = 'success';
         },
 
         // Une erreur HTTP
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
+          this.state = 'error';
         },
       });
   }

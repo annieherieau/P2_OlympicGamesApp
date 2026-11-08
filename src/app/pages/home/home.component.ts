@@ -9,11 +9,19 @@ import { DashboardComponent } from 'src/app/components/dashboard/dashboard.compo
 import { Kpi } from 'src/app/core/models/Kpi';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
+import { PageState } from 'src/app/core/models/page-state';
+import { ErrorComponent } from 'src/app/components/error/error.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeaderComponent, DashboardComponent],
+  imports: [
+    HeaderComponent,
+    DashboardComponent,
+    ErrorComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
@@ -22,6 +30,7 @@ export class HomeComponent implements AfterViewInit {
   public kpiList: Kpi[] = [];
   public data: Olympic[] = [];
   public error!: string;
+  public state: PageState = 'loading';
 
   constructor(
     private router: Router,
@@ -40,17 +49,19 @@ export class HomeComponent implements AfterViewInit {
       )
       .subscribe({
         next: (data) => {
-
           if (data.length === 0) {
+            this.state = 'empty';
             this.error = 'No Olympic data found';
             return;
           }
           this.error = '';
           this.data = data;
           this.buildKpiList();
+          this.state = 'success';
         },
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
+          this.state = 'error';
         },
       });
   }
