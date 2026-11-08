@@ -13,6 +13,8 @@ import { Participation } from 'src/app/core/models/participation.model';
 import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { Olympic } from 'src/app/core/models/olympic.model';
+import { getHttpErrorMessage } from 'src/app/core/utils/http-error-message';
 
 @Component({
   selector: 'app-country',
@@ -42,19 +44,23 @@ export class CountryComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
+    this.loadCountry();
+  }
+
+  private loadCountry(): void {
     this.route.paramMap
       .pipe(
         // Recherche du pays par id
         switchMap((param) => {
-          const rawId = param.get('id');
-          const countryId = rawId === null ? NaN : Number(rawId);
+          const rawId: string | null = param.get('id');
+          const countryId: number = rawId === null ? NaN : Number(rawId);
 
           // identifiant absent ou invalide.
           if (!Number.isInteger(countryId) || countryId <= 0) {
             return of(undefined);
+          } else {
+            return this.dataService.getCountryById(countryId);
           }
-
-          return this.dataService.getCountryById(countryId);
         }),
 
         // Diffère aussi les données en cache après la vérification de la vue.
@@ -63,41 +69,37 @@ export class CountryComponent implements AfterViewInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (country) => {
-          // Pays inexistant => Page not found
-          if (country === undefined) {
-            this.router.navigate(['/not-found', 'Country not found']);
-            return;
-          }
-
-          this.error = '';
-          this.titlePage = country.country;
-          this.data = country.participations;
-
-          // données vides
-          if (this.data.length === 0) {
-            this.state = 'empty';
-            return;
-          }
-          this.buildKpiList();
-          this.state = 'success';
-        },
-
-        // Une erreur HTTP
-        error: (error: HttpErrorResponse) => {
-          this.error = error.message;
-          this.state = 'error';
-        },
+        next: (country) => this.renderCountry(country),
+        error: (error: HttpErrorResponse) => this.handleError(error),
       });
   }
 
+  private renderCountry(country: Olympic | undefined): void {
+    if (country === undefined) {
+      this.router.navigate(['/not-found', 'Country not found']);
+    } else if (country.participations.length === 0) {
+      this.state = 'empty';
+    } else {
+      this.error = '';
+      this.titlePage = country.country;
+      this.data = country.participations;
+      this.buildKpiList();
+      this.state = 'success';
+    }
+  }
+
+  private handleError(error: HttpErrorResponse): void {
+    this.error = getHttpErrorMessage(error);
+    this.state = 'error';
+  }
+
   private buildKpiList(): void {
-    const totalMedals = this.data.reduce(
+    const totalMedals: number = this.data.reduce(
       (total, participation) => total + participation.medalsCount,
       0,
     );
 
-    const totalAthletes = this.data.reduce(
+    const totalAthletes: number = this.data.reduce(
       (total, participation) => total + participation.athleteCount,
       0,
     );
