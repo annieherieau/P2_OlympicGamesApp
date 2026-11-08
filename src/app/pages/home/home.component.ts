@@ -12,6 +12,7 @@ import { asapScheduler, observeOn } from 'rxjs';
 import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { getHttpErrorMessage } from 'src/app/core/utils/http-error-message';
 
 @Component({
   selector: 'app-home',
@@ -38,7 +39,17 @@ export class HomeComponent implements AfterViewInit {
     private destroyRef: DestroyRef,
   ) {}
 
+  // Après l’initialisation de la vue et de ses composants enfants @ViewChild
   ngAfterViewInit(): void {
+    this.loadData();
+  }
+
+  // Ouvre la page du pays sélectionné dans le graphique.
+  onCountryId(id: number): void {
+    this.router.navigate(['/country', id]);
+  }
+
+  private loadData(): void {
     this.service
       .getCountries()
       .pipe(
@@ -48,31 +59,30 @@ export class HomeComponent implements AfterViewInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: (data) => {
-          if (data.length === 0) {
-            this.state = 'empty';
-            this.error = 'No Olympic data found';
-            return;
-          }
-          this.error = '';
-          this.data = data;
-          this.buildKpiList();
-          this.state = 'success';
-        },
-        error: (error: HttpErrorResponse) => {
-          this.error = error.message;
-          this.state = 'error';
-        },
+        next: (data) => this.renderData(data),
+        error: (error: HttpErrorResponse) => this.handleError(error),
       });
   }
 
-  // Ouvre la page du pays sélectionné dans le graphique.
-  onCountryId(id: number): void {
-    this.router.navigate(['/country', id]);
+  private renderData(data: Olympic[]): void {
+    if (data.length === 0) {
+      this.state = 'empty';
+      this.error = 'No Olympic data found';
+    } else {
+      this.error = '';
+      this.data = data;
+      this.buildKpiList();
+      this.state = 'success';
+    }
+  }
+  
+  private handleError(error: HttpErrorResponse): void {
+    this.error = getHttpErrorMessage(error);
+    this.state = 'error';
   }
 
   private buildKpiList(): void {
-    const years = this.data.flatMap((country) =>
+    const years: number[] = this.data.flatMap((country) =>
       country.participations.map((participation) => participation.year),
     );
     this.kpiList = [
