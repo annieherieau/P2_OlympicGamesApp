@@ -1,11 +1,23 @@
 <app-header [titlePage]="titlePage"></app-header>
-@if (error) {
-  <div>
-    <p role="alert">{{ error }}</p>
-  </div>
+
+@switch (state) {
+  @case ('loading') {
+    <app-spinner></app-spinner>
+  }
+
+  @case ('empty') {
+    <p>No data.</p>
+  }
+
+  @case ('error') {
+    <app-error [error] = "error"></app-error>
+  }
+
+  @case ('success') {
+    <app-dashboard
+      [kpiList]="kpiList"
+      [data]="data"
+      (countryId)="onCountryId($event)"
+    ></app-dashboard>
+  }
 }
-<app-dashboard
-  [kpiList]="kpiList"
-  [data]="data"
-  (countryId)="onCountryId($event)"
-></app-dashboard>
