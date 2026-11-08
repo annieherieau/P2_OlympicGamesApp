@@ -5,7 +5,6 @@ import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from 'src/app/components/header/header.component';
-import { DashboardComponent } from 'src/app/components/dashboard/dashboard.component';
 import { Kpi } from 'src/app/core/models/Kpi';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
@@ -13,13 +12,14 @@ import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { getHttpErrorMessage } from 'src/app/core/utils/http-error-message';
+import { MedalsChartComponent } from 'src/app/components/medals-chart/medals-chart.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     HeaderComponent,
-    DashboardComponent,
+    MedalsChartComponent,
     ErrorComponent,
     SpinnerComponent,
   ],
@@ -75,7 +75,7 @@ export class HomeComponent implements AfterViewInit {
       this.state = 'success';
     }
   }
-  
+
   private handleError(error: HttpErrorResponse): void {
     this.error = getHttpErrorMessage(error);
     this.state = 'error';
