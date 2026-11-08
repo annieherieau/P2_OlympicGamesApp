@@ -11,12 +11,17 @@ import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
 import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
-
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeaderComponent, DashboardComponent, ErrorComponent],
+  imports: [
+    HeaderComponent,
+    DashboardComponent,
+    ErrorComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })

@@ -12,11 +12,18 @@ import { CountryDetailComponent } from 'src/app/components/country-detail/countr
 import { Participation } from 'src/app/core/models/participation.model';
 import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-country',
   standalone: true,
-  imports: [HeaderComponent, ButtonComponent, CountryDetailComponent, ErrorComponent],
+  imports: [
+    HeaderComponent,
+    ButtonComponent,
+    CountryDetailComponent,
+    ErrorComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })
@@ -68,18 +75,18 @@ export class CountryComponent implements AfterViewInit {
           this.data = country.participations;
 
           // données vides
-          if(this.data.length === 0){
-            this.state = "empty";
+          if (this.data.length === 0) {
+            this.state = 'empty';
             return;
           }
           this.buildKpiList();
-          this.state = "success";
+          this.state = 'success';
         },
 
         // Une erreur HTTP
         error: (error: HttpErrorResponse) => {
           this.error = error.message;
-          this.state = "error";
+          this.state = 'error';
         },
       });
   }
