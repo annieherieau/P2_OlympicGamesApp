@@ -1,6 +1,15 @@
 <app-header [titlePage]="titlePage"></app-header>
+
+@if (error) {
+  <div>
+    <p role="alert">{{ error }}</p>
+  </div>
+}
 <div>
-   <app-country-detail [kpiList]="kpiList" [chartId]="chartId" ></app-country-detail>
+  <app-country-detail
+    [kpiList]="kpiList"
+    [data]="data"
+  ></app-country-detail>
   <div class="center">
     <app-button label="Go back" link="/"></app-button>
     <app-button label="italy" link="/country/1"></app-button>

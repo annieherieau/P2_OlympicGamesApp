@@ -45,7 +45,17 @@ L’architecture sépare les écrans associés aux routes, les composants de pr�
 | `src/app/core/models/` | Décrire les structures et les types des données. |
 | `src/app/core/services/` | Centraliser le chargement, le partage et la recherche des données. |
 | `src/app/components/` | Regrouper les éléments de présentation et les assemblages de composants. Ils reçoivent leurs paramètres par des `@Input`. |
-| `src/app/pages/` | Contenir les écrans associés aux routes. Les pages demandent les données, calculent les indicateurs, gèrent les graphiques Chart.js et la navigation. |
+| `src/app/pages/` | Contenir les écrans associés aux routes. Les pages demandent les données, calculent les indicateurs, gèrent les états et la navigation. |
+
+### Pages et navigation
+
+Une page est un composant Angular qui représente un écran accessible par une URL.
+
+| Dossier et fichier principal | Route | Responsabilités actuelles |
+|---|---|---|
+| `home/home.component.ts` | `/` | Charger les pays, calculer les KPI, gérer l’état et naviguer vers un pays |
+| `country/country.component.ts` | `/country/:id` | Lire l’identifiant, charger le pays, calculer les KPI et gérer l’état. Renvoyer à not-found si le pays n'existe pas. |
+| `not-found/not-found.component.ts` | `/not-found/:error` et toute URL inconnue | Afficher un message de page introuvable et un bouton de retour vers l’accueil. |
 
 ### Composants de présentation
 
@@ -53,14 +63,14 @@ Les composants de `components/` sont autonomes (`standalone: true`). Ils ne char
 
 | Dossier et fichier principal | Rôle | Responsabilités actuelles |
 |---|---|---|
-| `header/header.component.ts` | Afficher l’en-tête commun | Afficher le titre de l’application et le titre de la page reçu par `titlePage`. |
-| `kpi/kpi.component.ts` | Afficher un indicateur | Recevoir un objet `Kpi` et afficher son libellé et sa valeur. |
-| `kpi-list/kpi-list.component.ts` | Afficher une liste d’indicateurs | Recevoir `kpiList` et créer un `app-kpi` pour chaque élément. |
-| `button/button.component.ts` | Fournir un lien avec une apparence de bouton | Recevoir `label` et `link` obligatoires ; naviguer avec `RouterLink`. Appliquer les `classes` facultatives, fournies comme chaîne ou tableau de chaînes. |
-| `medals-chart/medals-chart.component.ts` | Fournir le support du graphique global | Recevoir `chartId` et afficher le `<canvas>` correspondant. La page `home` crée et détruit le graphique Chart.js. |
-| `country-chart/country-chart.component.ts` | Fournir le support du graphique d’un pays | Recevoir `chartId` et afficher le `<canvas>` avec son conteneur. Ce composant n’est pas encore utilisé par la page `country`. |
-| `dashboard/dashboard.component.ts` | Assembler la présentation de la vue d’ensemble | Recevoir `kpiList` et `chartId`, puis les transmettre à `app-kpi-list` et `app-medals-chart`. Il est utilisé par la page `home`. |
-| `country-detail/country-detail.component.ts` | Assembler la présentation du détail d’un pays | Recevoir `kpiList` et `chartId`, puis les transmettre à `app-kpi-list` et `app-country-chart`. Il n’est pas encore utilisé par la page `country`. |
+| `header/header.component.ts` | Afficher l’en-tête commun | Afficher le titre de l’application et le titre de la page. |
+| `kpi/kpi.component.ts` | Afficher un indicateur | Afficher son libellé et sa valeur. |
+| `kpi-list/kpi-list.component.ts` | Afficher une liste d’indicateurs | Recevoir et affichier une liste d'indicateurs |
+| `button/button.component.ts` | Fournir un lien avec une apparence de bouton | Naviguer avec `RouterLink` |
+| `medals-chart/medals-chart.component.ts` | Afficher le  graphique global | Construire le camembert et émettre l’identifiant du pays cliqué |
+| `country-chart/country-chart.component.ts` | Afficher le graphique d’un pays | Construire la courbe |
+| `dashboard/dashboard.component.ts` | Assembler la présentation de la vue d’ensemble | Transmettre les données au graphique et les KPI à leur liste |
+| `country-detail/country-detail.component.ts` | Assembler la présentation du détail d’un pays | Transmettre les participations au graphique |
 
 ### Fichiers d’un composant
 
@@ -73,17 +83,7 @@ Cette répartition s’applique aux composants de présentation, aux pages et au
 | `nom.component.scss` | Définir les styles propres au composant : disposition, couleurs, espacements et adaptation aux écrans. |
 | `nom.component.spec.ts` | Contenir les tests automatisés du composant. Les tests existants vérifient principalement sa création. |
 
-### Pages et navigation
 
-Une page est un composant Angular qui représente un écran accessible par une URL.
-
-| Dossier et fichier principal | Route | Responsabilités actuelles |
-|---|---|---|
-| `home/home.component.ts` | `/` | Charger les pays, calculer le nombre de pays, le nombre d’éditions et les médailles par pays. Alimenter `app-dashboard`, créer le graphique circulaire et naviguer vers le pays sélectionné. Détruire le graphique à la sortie de la page. |
-| `country/country.component.ts` | `/country/:id` | Observer et valider l’identifiant, rechercher le pays, calculer ses participations, médailles et athlètes. Créer le graphique par année et le détruire à la sortie. Rediriger vers `/not-found` si le pays est absent ou l’identifiant invalide. |
-| `not-found/not-found.component.ts` | `/not-found` et toute URL inconnue | Afficher un message de page introuvable et un bouton de retour vers l’accueil. |
-
-La page `country` affiche encore directement ses indicateurs et son `<canvas>` dans son template. Elle utilise `app-header` et `app-button`, mais pas encore `app-country-detail`. Sa méthode `buildKpiList()` est encore vide.
 
 
 ### Modèles

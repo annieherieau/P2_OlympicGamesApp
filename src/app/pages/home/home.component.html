@@ -1,2 +1,11 @@
 <app-header [titlePage]="titlePage"></app-header>
-<app-dashboard [kpiList]="kpiList" [chartId]="chartId"></app-dashboard>
+@if (error) {
+  <div>
+    <p role="alert">{{ error }}</p>
+  </div>
+}
+<app-dashboard
+  [kpiList]="kpiList"
+  [data]="data"
+  (countryId)="onCountryId($event)"
+></app-dashboard>

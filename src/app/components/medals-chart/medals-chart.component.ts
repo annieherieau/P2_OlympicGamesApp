@@ -1,4 +1,16 @@
-import { Component, Input } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { Olympic } from 'src/app/core/models/olympic.model';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-medals-chart',
@@ -7,6 +19,109 @@ import { Component, Input } from '@angular/core';
   templateUrl: './medals-chart.component.html',
   styleUrl: './medals-chart.component.scss',
 })
-export class MedalsChartComponent {
-  @Input() chartId: string = '';
+export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+  @Input() data: Olympic[] = [];
+  // Transmet l'id du pays cliqué
+  @Output() countryId = new EventEmitter<number>();
+
+  // Récupère le canvas et sera transmis à Chart.js.
+  @ViewChild('canvas')
+  canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  // le graphique
+  private pieChart?: Chart<'pie', number[], string>;
+
+  // Empêche la création du graphique tant que le canvas n'est pas disponible.
+  private viewReady = false;
+
+  // initialisation de la vue
+  ngAfterViewInit(): void {
+    this.viewReady = true;
+    this.renderChart();
+  }
+
+  // refait le graphique si changement dans les données
+  ngOnChanges(): void {
+    this.renderChart();
+  }
+
+
+  private renderChart(): void {
+    // pas d'affichage avant initialisation
+    if (!this.viewReady) return;
+
+    // Supprime l'ancien graphique
+    this.pieChart?.destroy();
+    this.pieChart = undefined;
+
+    // Attend des données avant de construire le camembert.
+    if (this.data.length === 0) return;
+
+    this.buildChart();
+  }
+
+  // Supprime le graphique quand le composant est détruit.
+  ngOnDestroy(): void {
+    this.viewReady = false;
+    this.pieChart?.destroy();
+    this.pieChart = undefined;
+  }
+
+  private buildChart(): void {
+    // libellés
+    const labels = this.data.map((country) => country.country);
+    // total de médailles
+    const sumOfAllMedalsYears = this.data.map((country) =>
+      country.participations.reduce(
+        (total, participation) => total + participation.medalsCount,
+        0,
+      ),
+    );
+
+    // identifiants
+    const ids = this.data.map((country) => country.id);
+
+    // canvas local
+    this.pieChart = new Chart(this.canvasRef.nativeElement, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Medals',
+            data: sumOfAllMedalsYears,
+            backgroundColor: [
+              '#0b868f',
+              '#adc3de',
+              '#7a3c53',
+              '#8f6263',
+              'orange',
+              '#94819d',
+            ],
+            hoverOffset: 4,
+          },
+        ],
+      },
+      options: {
+        aspectRatio: 2.5,
+        onClick: (e) => {
+          if (e.native && this.pieChart) {
+            // Recherche le secteur situé sous le clic.
+            const points = this.pieChart.getElementsAtEventForMode(
+              e.native,
+              'point',
+              { intersect: true },
+              true,
+            );
+            if (points.length) {
+              const firstPoint = points[0];
+              const id = ids[firstPoint.index];
+              
+              this.countryId.emit(id);
+            }
+          }
+        },
+      },
+    });
+  }
 }

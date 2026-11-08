@@ -1,4 +1,7 @@
 <div>
   <app-kpi-list [kpiList]="kpiList"></app-kpi-list>
-  <app-medals-chart [chartId]="chartId"></app-medals-chart>
+  <app-medals-chart
+    [data]="data"
+    (countryId)="countryId.emit($event)"
+  ></app-medals-chart>
 </div>
