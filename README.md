@@ -164,7 +164,6 @@ Un identifiant de pays invalide ou inexistant entraîne une redirection vers la 
 - **Données supposées conformes aux modèles** : le typage TypeScript ne valide pas le contenu du JSON à l'exécution. Un fichier mal structuré peut provoquer des erreurs lors des calculs ou de l'affichage.
 - **Interface en anglais** : pas d'un système de traduction.
 - **Accessibilité des graphiques** : les graphiques utilisent des éléments `canvas` sans tableau de données alternatif ; l'accès au détail depuis le graphique repose sur un clic sur un secteur.
-- **Tests non fonctionnels** : les fichiers de tests et leur configuration sont présents, mais la suite est signalée comme non fonctionnelle dans le plan du projet. Elle doit être remise en état avant de servir de validation automatique. Les tests n'ont pas été exécutés pour cette rédaction et aucune couverture n'est annoncée.
 
 #### Compilation et déploiement
 
