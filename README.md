@@ -73,13 +73,25 @@ Angular CLI est installé localement avec les dépendances : son installation gl
 
 4. Ouvrir `http://localhost:4200` dans un navigateur.
 
-Pour choisir un autre port (exple 4201) :
-```bash
-npm start -- --port 4201
-```
-Le serveur utilise la configuration de développement et recharge automatiquement l'application après une modification des sources. 
+   Pour choisir un autre port (exple 4201) :
+   ```bash
+   npm start -- --port 4201
+   ```
+   Le serveur utilise la configuration de développement et recharge automatiquement l'application après une modification des sources. 
 
 5. Arrêter le serveur : `Ctrl+C` dans le terminal.
+
+6. Lancer les tests unitaires avec le rapport de couverture (Chrome doit être installé) :
+
+   ```bash
+   npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+   # lecture du fichier généré
+   open coverage/olympic-games-starter/index.html
+   ```
+
+### Tests
+
+Les tests unitaires utilisent Jasmine et Karma et couvrent les pages, les composants de présentation et `DataService` (requêtes HTTP simulées, tri, cache et recherche).
 
 ### Scripts disponibles
 
