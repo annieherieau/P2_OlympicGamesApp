@@ -1,4 +1,4 @@
-<app-header [titlePage]="titlePage"></app-header>
+<app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
 @switch (state) {
   @case ("loading") {
     <app-spinner></app-spinner>
@@ -14,14 +14,14 @@
 
   @case ("success") {
     <div>
-      <app-country-detail
-        [kpiList]="kpiList"
+      <app-country-chart
         [data]="data"
-      ></app-country-detail>
+      ></app-country-chart>
     </div>
   }
 }
 <div class="center">
   <app-button label="Go back" link="/"></app-button>
+  <!-- TODO supprimer -->
   <app-button label="italy" link="/country/1"></app-button>
 </div>

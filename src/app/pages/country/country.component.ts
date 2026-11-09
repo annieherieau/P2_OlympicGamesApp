@@ -8,13 +8,13 @@ import { asapScheduler, observeOn, of, switchMap } from 'rxjs';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { Kpi } from 'src/app/core/models/Kpi';
 import { ButtonComponent } from 'src/app/components/button/button.component';
-import { CountryDetailComponent } from 'src/app/components/country-detail/country-detail.component';
 import { Participation } from 'src/app/core/models/participation.model';
 import { PageState } from 'src/app/core/models/page-state';
 import { ErrorComponent } from 'src/app/components/error/error.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { getHttpErrorMessage } from 'src/app/core/utils/http-error-message';
+import { CountryChartComponent } from 'src/app/components/country-chart/country-chart.component';
 
 @Component({
   selector: 'app-country',
@@ -22,10 +22,11 @@ import { getHttpErrorMessage } from 'src/app/core/utils/http-error-message';
   imports: [
     HeaderComponent,
     ButtonComponent,
-    CountryDetailComponent,
+    CountryChartComponent,
     ErrorComponent,
     SpinnerComponent,
-  ],
+    CountryChartComponent
+],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })
