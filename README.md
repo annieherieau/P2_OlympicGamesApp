@@ -73,13 +73,25 @@ Angular CLI est installé localement avec les dépendances : son installation gl
 
 4. Ouvrir `http://localhost:4200` dans un navigateur.
 
-Pour choisir un autre port (exple 4201) :
-```bash
-npm start -- --port 4201
-```
-Le serveur utilise la configuration de développement et recharge automatiquement l'application après une modification des sources. 
+   Pour choisir un autre port (exple 4201) :
+   ```bash
+   npm start -- --port 4201
+   ```
+   Le serveur utilise la configuration de développement et recharge automatiquement l'application après une modification des sources. 
 
 5. Arrêter le serveur : `Ctrl+C` dans le terminal.
+
+6. Lancer les tests unitaires avec le rapport de couverture (Chrome doit être installé) :
+
+   ```bash
+   npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+   # lecture du fichier généré
+   open coverage/olympic-games-starter/index.html
+   ```
+
+### Tests
+
+Les tests unitaires utilisent Jasmine et Karma et couvrent les pages, les composants de présentation et `DataService` (requêtes HTTP simulées, tri, cache et recherche).
 
 ### Scripts disponibles
 
@@ -164,7 +176,6 @@ Un identifiant de pays invalide ou inexistant entraîne une redirection vers la 
 - **Données supposées conformes aux modèles** : le typage TypeScript ne valide pas le contenu du JSON à l'exécution. Un fichier mal structuré peut provoquer des erreurs lors des calculs ou de l'affichage.
 - **Interface en anglais** : pas d'un système de traduction.
 - **Accessibilité des graphiques** : les graphiques utilisent des éléments `canvas` sans tableau de données alternatif ; l'accès au détail depuis le graphique repose sur un clic sur un secteur.
-- **Tests non fonctionnels** : les fichiers de tests et leur configuration sont présents, mais la suite est signalée comme non fonctionnelle dans le plan du projet. Elle doit être remise en état avant de servir de validation automatique. Les tests n'ont pas été exécutés pour cette rédaction et aucune couverture n'est annoncée.
 
 #### Compilation et déploiement
 
