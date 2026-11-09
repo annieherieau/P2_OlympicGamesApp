@@ -177,6 +177,8 @@ describe('CountryComponent', () => {
   for (const [status, message] of [
     [0, 'Unable to reach the server. Please check your connection.'],
     [404, 'The requested data could not be found.'],
+    [500, 'The service is temporarily unavailable. Please try again later.'],
+    [502, 'The service is temporarily unavailable. Please try again later.'],
     [503, 'The service is temporarily unavailable. Please try again later.'],
     [400, 'Unable to load the data. Please try again.'],
   ] as const) {
