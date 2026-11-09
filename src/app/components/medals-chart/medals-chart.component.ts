@@ -22,6 +22,7 @@ import Chart from 'chart.js/auto';
 export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() data: Olympic[] = [];
   // Transmet l'id du pays cliqué
+  // Transmet le pays cliqué à la page Home.
   @Output() countryId = new EventEmitter<number>();
 
   // Récupère le canvas et sera transmis à Chart.js.
@@ -68,19 +69,14 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private buildChart(): void {
-    // libellés
-    const labels = this.data.map((country) => country.country);
-    // total de médailles
-    const sumOfAllMedalsYears = this.data.map((country) =>
+    const ids: number[] = this.data.map((country) => country.id);
+    const labels: string[] = this.data.map((country) => country.country);
+    const sumOfAllMedalsYears: number[] = this.data.map((country) =>
       country.participations.reduce(
         (total, participation) => total + participation.medalsCount,
         0,
       ),
     );
-
-    // identifiants
-    const ids = this.data.map((country) => country.id);
-
     // canvas local
     this.pieChart = new Chart(this.canvasRef.nativeElement, {
       type: 'pie',

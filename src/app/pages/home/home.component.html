@@ -1,23 +1,21 @@
-<app-header [titlePage]="titlePage"></app-header>
-
+<app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
 @switch (state) {
-  @case ('loading') {
+  @case ("loading") {
     <app-spinner></app-spinner>
   }
 
-  @case ('empty') {
+  @case ("empty") {
     <p>No data.</p>
   }
 
-  @case ('error') {
-    <app-error [error] = "error"></app-error>
+  @case ("error") {
+    <app-error [error]="error"></app-error>
   }
 
-  @case ('success') {
-    <app-dashboard
-      [kpiList]="kpiList"
+  @case ("success") {
+    <app-medals-chart
       [data]="data"
       (countryId)="onCountryId($event)"
-    ></app-dashboard>
+    ></app-medals-chart>
   }
 }

@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
@@ -11,7 +10,6 @@ import {
 import Chart from 'chart.js/auto';
 import { Participation } from 'src/app/core/models/participation.model';
 
-
 @Component({
   selector: 'app-country-chart',
   standalone: true,
@@ -19,35 +17,41 @@ import { Participation } from 'src/app/core/models/participation.model';
   templateUrl: './country-chart.component.html',
   styleUrl: './country-chart.component.scss',
 })
-export class CountryChartComponent implements AfterViewInit, OnChanges, OnDestroy{
+export class CountryChartComponent
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   @Input() data: Participation[] = [];
-// Récupère le canvas et sera transmis à Chart.js.
+  // Récupère le canvas et sera transmis à Chart.js.
   @ViewChild('canvas')
   canvasRef!: ElementRef<HTMLCanvasElement>;
- // le graphique
- private lineChart!: Chart<'line', number[], number>;
+  private lineChart!: Chart<'line', number[], number>;
 
- // Empêche la création du graphique tant que le canvas n'est pas disponible.
+  // Empêche la création du graphique tant que le canvas n'est pas disponible.
   private viewReady = false;
 
-   // initialisation de la vue
+  // initialisation de la vue
   ngAfterViewInit(): void {
     this.viewReady = true;
     this.renderChart();
   }
 
-    // refait le graphique si changement dans les données
+  // refait le graphique si changement dans les données
   ngOnChanges(): void {
     this.renderChart();
   }
+  
+  // Supprime le graphique quand le composant est détruit.
+  ngOnDestroy(): void {
+    this.viewReady = false;
+    this.lineChart?.destroy();
+  }
 
-    private renderChart(): void {
+  private renderChart(): void {
     // pas d'affichage avant initialisation
     if (!this.viewReady) return;
 
     // Supprime l'ancien graphique
     this.lineChart?.destroy();
-    //this.lineChart = undefined;
 
     // Attend des données avant de construire le camembert.
     if (this.data.length === 0) return;
@@ -55,16 +59,9 @@ export class CountryChartComponent implements AfterViewInit, OnChanges, OnDestro
     this.buildChart();
   }
 
-   // Supprime le graphique quand le composant est détruit.
-  ngOnDestroy(): void {
-    this.viewReady = false;
-    this.lineChart?.destroy();
-    //this.lineChart = undefined;
-  }
-
   private buildChart(): void {
-    const years = this.data.map(({ year }) => year);
-    const medals = this.data.map(({ medalsCount }) => medalsCount);
+    const years: number[] = this.data.map(({ year }) => year);
+    const medals: number[] = this.data.map(({ medalsCount }) => medalsCount);
 
     this.lineChart = new Chart(this.canvasRef.nativeElement, {
       type: 'line',
@@ -83,6 +80,4 @@ export class CountryChartComponent implements AfterViewInit, OnChanges, OnDestro
       },
     });
   }
-
-
 }
