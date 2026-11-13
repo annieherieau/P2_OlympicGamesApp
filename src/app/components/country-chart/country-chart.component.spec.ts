@@ -14,7 +14,10 @@ describe('CountryChartComponent', () => {
 
   beforeEach(async () => {
     // Garde un vrai canvas et évite les animations asynchrones pendant les tests.
-    getContext = spyOn(HTMLCanvasElement.prototype, 'getContext').and.callThrough();
+    getContext = spyOn(
+      HTMLCanvasElement.prototype,
+      'getContext',
+    ).and.callThrough();
     originalAnimation = Chart.defaults.animation;
     Chart.defaults.animation = false;
     await TestBed.configureTestingModule({
@@ -77,7 +80,9 @@ describe('CountryChartComponent', () => {
   it('should build a line chart with the expected labels and medal values', () => {
     render();
     const instance = chart();
-    expect('type' in instance.config ? instance.config.type : undefined).toBe('line');
+    expect('type' in instance.config ? instance.config.type : undefined).toBe(
+      'line',
+    );
     expect(instance.data.labels).toEqual([2016, 2012]);
     expect(instance.data.datasets[0].data).toEqual([3, 5]);
   });

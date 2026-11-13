@@ -2,7 +2,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ActivatedRoute, convertToParamMap, ParamMap, provideRouter, Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  convertToParamMap,
+  ParamMap,
+  provideRouter,
+  Router,
+} from '@angular/router';
 import { finalize, Subject } from 'rxjs';
 import { CountryChartComponent } from 'src/app/components/country-chart/country-chart.component';
 import { ErrorComponent } from 'src/app/components/error/error.component';
@@ -65,8 +71,12 @@ describe('CountryComponent', () => {
     nextCountry$ = new Subject<Olympic | undefined>();
     stopParams = jasmine.createSpy('stopParams');
     stopCountry = jasmine.createSpy('stopCountry');
-    service = jasmine.createSpyObj<DataService>('DataService', ['getCountryById']);
-    service.getCountryById.and.returnValue(country$.pipe(finalize(stopCountry)));
+    service = jasmine.createSpyObj<DataService>('DataService', [
+      'getCountryById',
+    ]);
+    service.getCountryById.and.returnValue(
+      country$.pipe(finalize(stopCountry)),
+    );
     country = {
       id: 7,
       country: 'France',
@@ -80,7 +90,10 @@ describe('CountryComponent', () => {
       imports: [CountryComponent],
       providers: [
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: params$.pipe(finalize(stopParams)) } },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: params$.pipe(finalize(stopParams)) },
+        },
         { provide: DataService, useValue: service },
       ],
     })
@@ -161,7 +174,10 @@ describe('CountryComponent', () => {
     country$.next(undefined);
     await render();
 
-    expect(navigate).toHaveBeenCalledOnceWith(['/not-found', 'Country not found']);
+    expect(navigate).toHaveBeenCalledOnceWith([
+      '/not-found',
+      'Country not found',
+    ]);
   });
 
   for (const id of [null, 'abc', '0', '-1', '1.5']) {
@@ -170,7 +186,10 @@ describe('CountryComponent', () => {
       await render();
 
       expect(service.getCountryById).not.toHaveBeenCalled();
-      expect(navigate).toHaveBeenCalledOnceWith(['/not-found', 'Country not found']);
+      expect(navigate).toHaveBeenCalledOnceWith([
+        '/not-found',
+        'Country not found',
+      ]);
     });
   }
 
@@ -191,7 +210,9 @@ describe('CountryComponent', () => {
       expect(error).not.toBeNull();
       expect((error.componentInstance as ErrorComponent).error).toBe(message);
       const element: HTMLElement = error.nativeElement;
-      expect(element.querySelector('[role="alert"]')?.textContent?.trim()).toBe(message);
+      expect(element.querySelector('[role="alert"]')?.textContent?.trim()).toBe(
+        message,
+      );
       expectNoChartOrSpinner();
       expect(navigate).not.toHaveBeenCalled();
     });

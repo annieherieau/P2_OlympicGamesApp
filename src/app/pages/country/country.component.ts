@@ -6,7 +6,7 @@ import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { asapScheduler, observeOn, of, switchMap } from 'rxjs';
 import { HeaderComponent } from 'src/app/components/header/header.component';
-import { Kpi } from 'src/app/core/models/Kpi';
+import { Kpi } from 'src/app/core/models/Kpi.model';
 import { ButtonComponent } from 'src/app/components/button/button.component';
 import { Participation } from 'src/app/core/models/participation.model';
 import { PageState } from 'src/app/core/models/page-state';
@@ -25,7 +25,7 @@ import { CountryChartComponent } from 'src/app/components/country-chart/country-
     CountryChartComponent,
     ErrorComponent,
     SpinnerComponent,
-],
+  ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],
 })

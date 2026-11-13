@@ -2,19 +2,19 @@
 <main class="center">
   <div>
     @switch (state) {
-      @case ("loading") {
+      @case ('loading') {
         <app-spinner></app-spinner>
       }
 
-      @case ("empty") {
+      @case ('empty') {
         <div class="alert alert-secondary">No Olympic data found</div>
       }
 
-      @case ("error") {
+      @case ('error') {
         <app-error [error]="error"></app-error>
       }
 
-      @case ("success") {
+      @case ('success') {
         <div>
           <app-country-chart [data]="data"></app-country-chart>
         </div>

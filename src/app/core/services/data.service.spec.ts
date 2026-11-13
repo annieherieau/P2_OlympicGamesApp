@@ -1,6 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Olympic } from '../models/olympic.model';
@@ -64,24 +67,44 @@ describe('DataService', () => {
   });
 
   it('should ignore surrounding spaces when sorting and preserve the names', () => {
-    const countries = [country(1, 'Italy'), country(2, '  France  '), country(3, ' Argentina')];
+    const countries = [
+      country(1, 'Italy'),
+      country(2, '  France  '),
+      country(3, ' Argentina'),
+    ];
     const next = jasmine.createSpy('next');
     service.getCountries().subscribe({ next, error: unexpectedError });
     http.expectOne(url).flush(countries);
-    expect(next).toHaveBeenCalledOnceWith([countries[2], countries[1], countries[0]]);
+    expect(next).toHaveBeenCalledOnceWith([
+      countries[2],
+      countries[1],
+      countries[0],
+    ]);
     expect(countries[1].country).toBe('  France  ');
   });
 
   it('should sort accented names according to the French locale', () => {
-    const countries = [country(1, 'Zimbabwe'), country(2, 'États-Unis'), country(3, 'Allemagne')];
+    const countries = [
+      country(1, 'Zimbabwe'),
+      country(2, 'États-Unis'),
+      country(3, 'Allemagne'),
+    ];
     const next = jasmine.createSpy('next');
     service.getCountries().subscribe({ next, error: unexpectedError });
     http.expectOne(url).flush(countries);
-    expect(next).toHaveBeenCalledOnceWith([countries[2], countries[1], countries[0]]);
+    expect(next).toHaveBeenCalledOnceWith([
+      countries[2],
+      countries[1],
+      countries[0],
+    ]);
   });
 
   it('should preserve the order of names equivalent in case and accents', () => {
-    const countries = [country(1, 'équipe'), country(2, 'EQUIPE'), country(3, 'Equipe')];
+    const countries = [
+      country(1, 'équipe'),
+      country(2, 'EQUIPE'),
+      country(3, 'Equipe'),
+    ];
     const next = jasmine.createSpy('next');
     service.getCountries().subscribe({ next, error: unexpectedError });
     http.expectOne(url).flush(countries);
@@ -109,7 +132,9 @@ describe('DataService', () => {
     const list = jasmine.createSpy('list');
     const lookup = jasmine.createSpy('lookup');
     service.getCountries().subscribe({ next: list, error: unexpectedError });
-    service.getCountryById(42).subscribe({ next: lookup, error: unexpectedError });
+    service
+      .getCountryById(42)
+      .subscribe({ next: lookup, error: unexpectedError });
     http.expectOne(url).flush([]);
     expect(list).toHaveBeenCalledOnceWith([]);
     expect(lookup).toHaveBeenCalledOnceWith(undefined);
@@ -157,7 +182,9 @@ describe('DataService', () => {
     const list = jasmine.createSpy('list');
     const lookup = jasmine.createSpy('lookup');
     service.getCountries().subscribe({ next: list, error: unexpectedError });
-    service.getCountryById(7).subscribe({ next: lookup, error: unexpectedError });
+    service
+      .getCountryById(7)
+      .subscribe({ next: lookup, error: unexpectedError });
     const france = country(7, 'France');
     http.expectOne(url).flush([france]);
     expect(list).toHaveBeenCalledOnceWith([france]);
@@ -169,7 +196,9 @@ describe('DataService', () => {
     const france = country(7, 'France');
     http.expectOne(url).flush([france]);
     const lookup = jasmine.createSpy('lookup');
-    service.getCountryById(7).subscribe({ next: lookup, error: unexpectedError });
+    service
+      .getCountryById(7)
+      .subscribe({ next: lookup, error: unexpectedError });
     expect(lookup).toHaveBeenCalledOnceWith(france);
     http.expectNone(url);
   });
@@ -180,7 +209,9 @@ describe('DataService', () => {
     const next = jasmine.createSpy('next');
     service.getCountries().subscribe({ next, error: listError });
     service.getCountryById(7).subscribe({ next, error: lookupError });
-    http.expectOne(url).flush('Unavailable', { status: 503, statusText: 'Service Unavailable' });
+    http
+      .expectOne(url)
+      .flush('Unavailable', { status: 503, statusText: 'Service Unavailable' });
 
     expect(next).not.toHaveBeenCalled();
     expect(listError).toHaveBeenCalledTimes(1);
@@ -197,7 +228,9 @@ describe('DataService', () => {
   it('should request data again on a new subscription after an error', () => {
     const error = jasmine.createSpy('error');
     service.getCountries().subscribe({ error });
-    http.expectOne(url).flush('Unavailable', { status: 503, statusText: 'Service Unavailable' });
+    http
+      .expectOne(url)
+      .flush('Unavailable', { status: 503, statusText: 'Service Unavailable' });
     expect(error).toHaveBeenCalledTimes(1);
     const next = jasmine.createSpy('next');
     service.getCountries().subscribe({ next, error: unexpectedError });
@@ -208,8 +241,12 @@ describe('DataService', () => {
 
   it('should keep the request active until all subscribers unsubscribe, then reload on a new subscription', () => {
     const next = jasmine.createSpy('next');
-    const first = service.getCountries().subscribe({ next, error: unexpectedError });
-    const second = service.getCountryById(7).subscribe({ next, error: unexpectedError });
+    const first = service
+      .getCountries()
+      .subscribe({ next, error: unexpectedError });
+    const second = service
+      .getCountryById(7)
+      .subscribe({ next, error: unexpectedError });
     const request = http.expectOne(url);
     first.unsubscribe();
     expect(request.cancelled).toBeFalse();

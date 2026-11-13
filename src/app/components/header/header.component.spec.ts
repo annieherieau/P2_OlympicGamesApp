@@ -10,9 +10,8 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeaderComponent]
-    })
-    .compileComponents();
+      imports: [HeaderComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
@@ -32,7 +31,9 @@ describe('HeaderComponent', () => {
     fixture.componentRef.setInput('titlePage', 'France');
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    expect(element.querySelector('h1')?.textContent?.trim()).toBe('Olympic games app');
+    expect(element.querySelector('h1')?.textContent?.trim()).toBe(
+      'Olympic games app',
+    );
     expect(element.querySelector('h2')?.textContent?.trim()).toBe('France');
   });
 

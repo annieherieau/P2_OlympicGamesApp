@@ -1,5 +1,5 @@
 import { Component, Input, input } from '@angular/core';
-import { Kpi } from 'src/app/core/models/Kpi';
+import { Kpi } from 'src/app/core/models/Kpi.model';
 import { KpiListComponent } from '../kpi-list/kpi-list.component';
 import { RouterLink } from '@angular/router';
 

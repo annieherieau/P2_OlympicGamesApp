@@ -5,7 +5,7 @@ import { DataService } from 'src/app/core/services/data.service';
 import { DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from 'src/app/components/header/header.component';
-import { Kpi } from 'src/app/core/models/Kpi';
+import { Kpi } from 'src/app/core/models/Kpi.model';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { asapScheduler, observeOn } from 'rxjs';
 import { PageState } from 'src/app/core/models/page-state';

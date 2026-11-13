@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Kpi } from 'src/app/core/models/Kpi';
+import { Kpi } from 'src/app/core/models/Kpi.model';
 
 @Component({
   selector: 'app-kpi',

@@ -8,9 +8,8 @@ describe('KpiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KpiComponent]
-    })
-    .compileComponents();
+      imports: [KpiComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(KpiComponent);
     component = fixture.componentInstance;
@@ -23,7 +22,10 @@ describe('KpiComponent', () => {
 
   function texts(): (string | null)[] {
     const element: HTMLElement = fixture.nativeElement;
-    return Array.from(element.querySelectorAll('p'), (node) => node.textContent?.trim() ?? null);
+    return Array.from(
+      element.querySelectorAll('p'),
+      (node) => node.textContent?.trim() ?? null,
+    );
   }
 
   it('should display the KPI label and value', () => {

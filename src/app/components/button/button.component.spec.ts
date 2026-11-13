@@ -11,9 +11,8 @@ describe('ButtonComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ButtonComponent],
-      providers: [provideRouter([])]
-    })
-    .compileComponents();
+      providers: [provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ButtonComponent);
     component = fixture.componentInstance;
@@ -32,7 +31,8 @@ describe('ButtonComponent', () => {
   }
 
   function targetUrl(): string {
-    const routerLink = fixture.debugElement.query(By.directive(RouterLink))
+    const routerLink = fixture.debugElement
+      .query(By.directive(RouterLink))
       .injector.get(RouterLink);
     return TestBed.inject(Router).serializeUrl(routerLink.urlTree!);
   }

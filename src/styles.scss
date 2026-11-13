@@ -1,14 +1,19 @@
 // couleurs du thème Bootstrap.
 $primary: #0a747c;
 
-@import "bootstrap/scss/bootstrap";
+@import 'bootstrap/scss/bootstrap';
 
 body {
   background-color: #fff;
   color: #000;
 }
 
-h1, h2, h3, h4, h5, h6{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   width: 100%;
 }
 
@@ -25,14 +30,13 @@ button:focus-visible {
   width: 100%;
   max-width: 900px;
   margin-inline: auto;
- 
 }
 
 .center {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  
+
   text-align: center;
   padding: 16px;
 }

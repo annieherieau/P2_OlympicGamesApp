@@ -10,9 +10,8 @@ describe('KpiListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KpiListComponent]
-    })
-    .compileComponents();
+      imports: [KpiListComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(KpiListComponent);
     component = fixture.componentInstance;
@@ -24,7 +23,8 @@ describe('KpiListComponent', () => {
   });
 
   function children(): KpiComponent[] {
-    return fixture.debugElement.queryAll(By.directive(KpiComponent))
+    return fixture.debugElement
+      .queryAll(By.directive(KpiComponent))
       .map((child) => child.componentInstance as KpiComponent);
   }
 

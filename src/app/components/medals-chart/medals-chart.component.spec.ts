@@ -9,16 +9,23 @@ describe('MedalsChartComponent', () => {
   let getContext: jasmine.Spy;
   let originalAnimation: typeof Chart.defaults.animation;
   const data: Olympic[] = [
-    { id: 7, country: 'France', participations: [
-    { id: 1, year: 2016, city: 'Rio', medalsCount: 3, athleteCount: 10 },
-    { id: 2, year: 2012, city: 'London', medalsCount: 5, athleteCount: 20 },
-  ] },
+    {
+      id: 7,
+      country: 'France',
+      participations: [
+        { id: 1, year: 2016, city: 'Rio', medalsCount: 3, athleteCount: 10 },
+        { id: 2, year: 2012, city: 'London', medalsCount: 5, athleteCount: 20 },
+      ],
+    },
     { id: 42, country: 'Italy', participations: [] },
   ];
 
   beforeEach(async () => {
     // Garde un vrai canvas et évite les animations asynchrones pendant les tests.
-    getContext = spyOn(HTMLCanvasElement.prototype, 'getContext').and.callThrough();
+    getContext = spyOn(
+      HTMLCanvasElement.prototype,
+      'getContext',
+    ).and.callThrough();
     originalAnimation = Chart.defaults.animation;
     Chart.defaults.animation = false;
     await TestBed.configureTestingModule({
@@ -82,7 +89,9 @@ describe('MedalsChartComponent', () => {
   it('should build a pie chart with the expected labels and medal values', () => {
     render();
     const instance = chart();
-    expect('type' in instance.config ? instance.config.type : undefined).toBe('pie');
+    expect('type' in instance.config ? instance.config.type : undefined).toBe(
+      'pie',
+    );
     expect(instance.data.labels).toEqual(['France', 'Italy']);
     expect(instance.data.datasets[0].data).toEqual([8, 0]);
   });
@@ -117,7 +126,10 @@ describe('MedalsChartComponent', () => {
     expect(Chart.getChart(canvas())).toBeUndefined();
   });
 
-  function click(instance: Chart<'pie', number[], string>, native: MouseEvent | null): void {
+  function click(
+    instance: Chart<'pie', number[], string>,
+    native: MouseEvent | null,
+  ): void {
     const onClick = instance.options.onClick;
     expect(onClick).toBeDefined();
     if (!onClick) throw new Error('Missing chart click callback');
@@ -127,20 +139,35 @@ describe('MedalsChartComponent', () => {
   it('should emit the country ID rather than its sector index', () => {
     render();
     const instance = chart();
-    const hitTest = spyOn(instance, 'getElementsAtEventForMode').and.returnValue([
-      { index: 1, datasetIndex: 0, element: instance.getDatasetMeta(0).data[1] },
+    const hitTest = spyOn(
+      instance,
+      'getElementsAtEventForMode',
+    ).and.returnValue([
+      {
+        index: 1,
+        datasetIndex: 0,
+        element: instance.getDatasetMeta(0).data[1],
+      },
     ]);
     const emit = spyOn(fixture.componentInstance.countryId, 'emit');
     const native = new MouseEvent('click');
     click(instance, native);
-    expect(hitTest).toHaveBeenCalledOnceWith(native, 'point', { intersect: true }, true);
+    expect(hitTest).toHaveBeenCalledOnceWith(
+      native,
+      'point',
+      { intersect: true },
+      true,
+    );
     expect(emit).toHaveBeenCalledOnceWith(42);
   });
 
   it('should not emit when clicking outside a sector', () => {
     render();
     const instance = chart();
-    const hitTest = spyOn(instance, 'getElementsAtEventForMode').and.returnValue([]);
+    const hitTest = spyOn(
+      instance,
+      'getElementsAtEventForMode',
+    ).and.returnValue([]);
     const emit = spyOn(fixture.componentInstance.countryId, 'emit');
     click(instance, new MouseEvent('click'));
     expect(hitTest).toHaveBeenCalledTimes(1);
@@ -162,7 +189,11 @@ describe('MedalsChartComponent', () => {
     render([{ ...data[0], id: 99, country: 'Japan' }]);
     const instance = chart();
     spyOn(instance, 'getElementsAtEventForMode').and.returnValue([
-      { index: 0, datasetIndex: 0, element: instance.getDatasetMeta(0).data[0] },
+      {
+        index: 0,
+        datasetIndex: 0,
+        element: instance.getDatasetMeta(0).data[0],
+      },
     ]);
     const emit = spyOn(fixture.componentInstance.countryId, 'emit');
     click(instance, new MouseEvent('click'));

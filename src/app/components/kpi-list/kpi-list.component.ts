@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Kpi } from 'src/app/core/models/Kpi';
+import { Kpi } from 'src/app/core/models/Kpi.model';
 import { KpiComponent } from '../kpi/kpi.component';
 
 @Component({
@@ -7,8 +7,8 @@ import { KpiComponent } from '../kpi/kpi.component';
   standalone: true,
   imports: [KpiComponent],
   templateUrl: './kpi-list.component.html',
-  styleUrl: './kpi-list.component.scss'
+  styleUrl: './kpi-list.component.scss',
 })
 export class KpiListComponent {
-  @Input() kpiList: Kpi[] = []
+  @Input() kpiList: Kpi[] = [];
 }
