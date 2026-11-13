@@ -12,6 +12,11 @@ h1, h2, h3, h4, h5, h6{
   width: 100%;
 }
 
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #0a747c;
+  outline-offset: 4px;
+}
 /* Styles globaux de l'application uniquement. */
 .page-layout {
   display: grid;
