@@ -8,6 +8,12 @@
   </nav>
 </header>
 <h2 class="text-bg-primary text-center py-3">{{ titlePage }}</h2>
+@if (isHome()) {
+  <p class="m-2 text-center">
+    Explore Olympic medal totals by country and select a country to view its
+    results over the years.
+  </p>
+}
 <div>
   <app-kpi-list [kpiList]="kpiList"></app-kpi-list>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 import { Kpi } from 'src/app/core/models/Kpi';
 import { KpiListComponent } from '../kpi-list/kpi-list.component';
 import { RouterLink } from '@angular/router';
@@ -14,4 +14,5 @@ export class HeaderComponent {
   @Input() titlePage: string = '';
   @Input() kpiList: Kpi[] = [];
   homelink: string = '/';
+  readonly isHome = input(false);
 }

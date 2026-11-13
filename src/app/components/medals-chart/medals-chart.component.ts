@@ -11,16 +11,23 @@ import {
 } from '@angular/core';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import Chart from 'chart.js/auto';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-medals-chart',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './medals-chart.component.html',
   styleUrl: './medals-chart.component.scss',
 })
-export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class MedalsChartComponent
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   @Input() data: Olympic[] = [];
+  medalRows: { id: number; country: string; total: number }[] = [];
+
+  private static nextDescriptionId = 0;
+  readonly descriptionId = `medals-description-${MedalsChartComponent.nextDescriptionId++}`;
   // Transmet l'id du pays cliqué
   // Transmet le pays cliqué à la page Home.
   @Output() countryId = new EventEmitter<number>();
@@ -43,9 +50,16 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
 
   // refait le graphique si changement dans les données
   ngOnChanges(): void {
+    this.medalRows = this.data.map(({ id, country, participations }) => ({
+      id,
+      country,
+      total: participations.reduce(
+        (total, participation) => total + participation.medalsCount,
+        0,
+      ),
+    }));
     this.renderChart();
   }
-
 
   private renderChart(): void {
     // pas d'affichage avant initialisation
@@ -71,12 +85,7 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
   private buildChart(): void {
     const ids: number[] = this.data.map((country) => country.id);
     const labels: string[] = this.data.map((country) => country.country);
-    const sumOfAllMedalsYears: number[] = this.data.map((country) =>
-      country.participations.reduce(
-        (total, participation) => total + participation.medalsCount,
-        0,
-      ),
-    );
+    const sumOfAllMedalsYears = this.medalRows.map(({ total }) => total);
     // canvas local
     this.pieChart = new Chart(this.canvasRef.nativeElement, {
       type: 'pie',
@@ -101,6 +110,17 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Total Olympic medals by country',
+            color: '#595959',
+            position: 'bottom',
+            font: {
+              size: 18,
+            },
+          },
+        },
         onClick: (e) => {
           if (e.native && this.pieChart) {
             // Recherche le secteur situé sous le clic.
@@ -113,7 +133,7 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
             if (points.length) {
               const firstPoint = points[0];
               const id = ids[firstPoint.index];
-              
+
               this.countryId.emit(id);
             }
           }

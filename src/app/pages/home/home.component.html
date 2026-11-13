@@ -1,4 +1,8 @@
-<app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
+<app-header
+  [titlePage]="titlePage"
+  [kpiList]="kpiList"
+  [isHome]="true"
+></app-header>
 <main class="center">
   @switch (state) {
     @case ("loading") {
@@ -6,7 +10,7 @@
     }
 
     @case ("empty") {
-        <p>No data.</p>
+      <p>No data.</p>
     }
 
     @case ("error") {

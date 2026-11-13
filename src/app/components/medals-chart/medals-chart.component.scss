@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.medals-table {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  text-align: left;
+}
+
+a:focus-visible {
+  outline: 3px solid #0a747c;
+  outline-offset: 4px;
+}
