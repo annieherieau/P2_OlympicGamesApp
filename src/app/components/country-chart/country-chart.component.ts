@@ -71,7 +71,10 @@ export class CountryChartComponent
           {
             label: 'medals',
             data: medals,
-            backgroundColor: '#0b868f',
+            backgroundColor: '#0a747c',
+            borderColor: '#0a747c',
+            pointBackgroundColor: '#0a747c',
+            pointBorderColor: '#0a747c',
           },
         ],
       },
@@ -79,10 +82,21 @@ export class CountryChartComponent
         responsive: true,
         maintainAspectRatio: false,
 
+        scales: {
+          x: { ticks: { color: '#595959' } },
+          y: { ticks: { color: '#595959' } },
+        },
         plugins: {
+          legend: { labels: { color: '#595959' } },
+          tooltip: {
+            backgroundColor: '#222',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+          },
           title: {
             display: true,
             text: 'Dates',
+            color: '#595959',
             position: 'bottom',
           },
         },
