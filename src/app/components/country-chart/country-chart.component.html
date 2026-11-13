@@ -1,5 +1,30 @@
 <div class="chart-container">
-    <div>
-      <canvas #canvas></canvas>
-    </div>
-  </div>
+  <canvas
+    #canvas
+    role="img"
+    aria-label="Olympic medals by year"
+    [attr.aria-describedby]="descriptionId"
+  ></canvas>
+</div>
+
+<small [id]="descriptionId">
+  Exact values are listed below.
+</small>
+
+<table class="table medals-table">
+  <caption class="visually-hidden">Olympic medals by year</caption>
+  <thead>
+    <tr>
+      <th scope="col">Year</th>
+      <th scope="col">Medals</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (participation of data; track participation.id) {
+      <tr>
+        <th scope="row">{{ participation.year }}</th>
+        <td>{{ participation.medalsCount }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

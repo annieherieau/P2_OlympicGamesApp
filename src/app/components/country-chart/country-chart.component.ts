@@ -21,6 +21,9 @@ export class CountryChartComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
   @Input() data: Participation[] = [];
+
+  private static nextDescriptionId = 0;
+  readonly descriptionId = `country-medals-description-${CountryChartComponent.nextDescriptionId++}`;
   // Récupère le canvas et sera transmis à Chart.js.
   @ViewChild('canvas')
   canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -98,6 +101,9 @@ export class CountryChartComponent
             text: 'Dates',
             color: '#595959',
             position: 'bottom',
+            font: {
+              size: 18,
+            },
           },
         },
       },
