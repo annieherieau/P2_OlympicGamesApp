@@ -1,27 +1,29 @@
 <app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
-@switch (state) {
-  @case ("loading") {
-    <app-spinner></app-spinner>
-  }
+<main class="center">
+  <div>
+    @switch (state) {
+      @case ("loading") {
+        <app-spinner></app-spinner>
+      }
 
-  @case ("empty") {
-    <div class="center">
-      <p>No data.</p>
-    </div>
-  }
+      @case ("empty") {
+        <div class="center">
+          <p>No data.</p>
+        </div>
+      }
 
-  @case ("error") {
-    <app-error [error]="error"></app-error>
-  }
+      @case ("error") {
+        <app-error [error]="error"></app-error>
+      }
 
-  @case ("success") {
-    <div>
-      <app-country-chart [data]="data"></app-country-chart>
-    </div>
-  }
-}
-<div class="center">
-  <app-button label="Go back" link="/"></app-button>
-  <!-- TODO supprimer -->
-  <app-button label="italy" link="/country/1"></app-button>
-</div>
+      @case ("success") {
+        <div>
+          <app-country-chart [data]="data"></app-country-chart>
+        </div>
+      }
+    }
+  </div>
+  <div>
+    <app-button label="Go back" link="/"></app-button>
+  </div>
+</main>

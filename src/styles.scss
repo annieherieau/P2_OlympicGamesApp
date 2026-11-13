@@ -1,3 +1,17 @@
+// couleurs du thème Bootstrap.
+$primary: #0a747c;
+
+@import "bootstrap/scss/bootstrap";
+
+body {
+  background-color: #fff;
+  color: #000;
+}
+
+h1, h2, h3, h4, h5, h6{
+  width: 100%;
+}
+
 /* Styles globaux de l'application uniquement. */
 .page-layout {
   display: grid;
@@ -42,11 +56,10 @@
 }
 
 .center {
-  // Centre le bloc du message horizontalement.
   display: flex;
   justify-content: center;
-
-  // Centre aussi le texte lorsqu’il occupe plusieurs lignes.
+  flex-direction: column;
+  
   text-align: center;
   padding: 16px;
 }
