@@ -1,20 +1,27 @@
-<h2>Olympic games app</h2>
-<hr/>
-<div>
-  <div>
-    <div class="center">
-      <div>{{ titlePage }}</div>
-    </div>
-    <div class="split">
-      <div>
-        <p>Number of countries</p>
-        <p>{{ totalCountries }}</p>
-      </div>
-      <div>
-        <p>Number of JOs</p>
-        <p>{{ totalJOs }}</p>
-      </div>
-    </div>
-  </div>
-  <canvas id="DashboardPieChart">{{ pieChart }}</canvas>
-</div>
+<app-header
+  [titlePage]="titlePage"
+  [kpiList]="kpiList"
+  [isHome]="true"
+></app-header>
+<main class="center">
+  @switch (state) {
+    @case ('loading') {
+      <app-spinner></app-spinner>
+    }
+
+    @case ('empty') {
+      <div class="alert alert-secondary">No Olympic data found</div>
+    }
+
+    @case ('error') {
+      <app-error [error]="error"></app-error>
+    }
+
+    @case ('success') {
+      <app-medals-chart
+        [data]="data"
+        (countryId)="onCountryId($event)"
+      ></app-medals-chart>
+    }
+  }
+</main>

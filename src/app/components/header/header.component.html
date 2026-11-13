@@ -1,0 +1,19 @@
+<header>
+  <nav class="navbar" aria-label="Main navigation">
+    <div class="container-fluid justify-content-center">
+      <a class="navbar-brand m-0" [routerLink]="homelink">
+        <h1 class="m-0">Olympic games app</h1>
+      </a>
+    </div>
+  </nav>
+</header>
+<h2 class="text-bg-primary text-center py-3">{{ titlePage }}</h2>
+@if (isHome()) {
+  <p class="m-2 text-center">
+    Explore Olympic medal totals by country and select a country to view its
+    results over the years.
+  </p>
+}
+<div>
+  <app-kpi-list [kpiList]="kpiList"></app-kpi-list>
+</div>

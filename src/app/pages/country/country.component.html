@@ -1,30 +1,27 @@
-<div>
+<app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
+<main class="center">
   <div>
-    <div class="center">
-      <div>{{ titlePage }}</div>
-    </div>
-    <div class="split">
-      <div>
-        <p>Number of entries</p>
-        <p>{{ totalEntries }}</p>
-      </div>
-      <div>
-        <p>Total Number of medals</p>
-        <p>{{ totalMedals }}</p>
-      </div>
-      <div>
-        <p>Total Number of athletes</p>
-        <p>{{ totalAthletes }}</p>
-      </div>
-    </div>
+    @switch (state) {
+      @case ('loading') {
+        <app-spinner></app-spinner>
+      }
+
+      @case ('empty') {
+        <div class="alert alert-secondary">No Olympic data found</div>
+      }
+
+      @case ('error') {
+        <app-error [error]="error"></app-error>
+      }
+
+      @case ('success') {
+        <div>
+          <app-country-chart [data]="data"></app-country-chart>
+        </div>
+      }
+    }
   </div>
-  <div class="chart-container wrapper-container">
-    <div class="container">
-      <canvas id="countryChart">{{ lineChart }}</canvas>
-      <h2>Date</h2>
-    </div>
+  <div>
+    <app-button label="Back to home page" link="/"></app-button>
   </div>
-  <div class="center">
-    <a routerLink="">Go back</a>
-  </div>
-</div>
+</main>
