@@ -4,32 +4,38 @@
 
 ```text
 src/app/
-  ├── core/
-  │   ├── models/
-  │   │   ├── Kpi.ts
-  │   │   ├── olympic.model.ts
-  │   │   ├── page-state.ts
-  │   │   └── participation.model.ts
-  │   └── services/
-  │       └── data.service.ts
-  ├── components/
+  ├── components/                      # Composants d'affichage et graphiques
   │   ├── button/button.component.*
   │   ├── country-chart/country-chart.component.*
-  │   ├── country-detail/country-detail.component.*
-  │   ├── dashboard/dashboard.component.*
   │   ├── error/error.component.*
   │   ├── header/header.component.*
   │   ├── kpi/kpi.component.*
   │   ├── kpi-list/kpi-list.component.*
   │   ├── medals-chart/medals-chart.component.*
   │   └── spinner/spinner.component.*
-  ├── pages/
+  ├── core/
+  │   ├── models/                      # Types des données, indicateurs et états de page
+  │   │   ├── Kpi.ts
+  │   │   ├── olympic.model.ts
+  │   │   ├── page-state.ts
+  │   │   └── participation.model.ts
+  │   ├── services/                    # Accès et partage des données : DataService
+  │   │   └── data.service.ts
+  │   └── utils/                       # Fonctions partagées
+  │       └── http-error-message.ts
+  ├── pages/                           # Pages accessibles par une URL
   │   ├── country/country.component.*
   │   ├── home/home.component.*
   │   └── not-found/not-found.component.*
-  ├── app-routing.module.ts
-  ├── app.module.ts
-  └── app.component.*
+  ├── app-routing.module.ts                 # Déclaration des routes
+  ├── app.component.*
+  └── app.module.ts
+  ├── assets/
+  │   ├── images/                # Images de l'application
+  │   └── mock/olympic.json      # Jeu de données
+  ├── environments/              # Configurations de développement et production
+  ├── main.ts                    # Point d'entrée
+  └── styles.scss                # Styles globaux
 
 ```
 
@@ -44,10 +50,11 @@ L’architecture sépare les écrans associés aux routes, les composants de pr�
 | Dossier                  | Rôle et responsabilités                                                                                                                 |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/app/`               | Contenir le code Angular et la configuration de navigation.                                                                             |
-| `src/app/core/`          | Regrouper les modèles et le service de données utilisés par les pages.                                                                  |
+| `src/app/core/`          | Regrouper les modèles, le service de données et les fonctions utilitaires partagées.                                                                  |
 | `src/app/core/models/`   | Décrire les structures et les types des données.                                                                                        |
 | `src/app/core/services/` | Centraliser le chargement, le partage et la recherche des données.                                                                      |
-| `src/app/components/`    | Regrouper les éléments de présentation et les assemblages de composants. Ils reçoivent leurs paramètres par des `@Input`.               |
+| `src/app/core/utils/` | Fournir des fonctions partagées. |
+| `src/app/components/`    | Regrouper les éléments de présentation et les assemblages de composants.               |
 | `src/app/pages/`         | Contenir les écrans associés aux routes. Les pages demandent les données, calculent les indicateurs, gèrent les états et la navigation. |
 
 ### Pages et navigation
@@ -66,38 +73,14 @@ Les composants de `components/` sont autonomes (`standalone: true`). Ils ne char
 
 | Dossier et fichier principal                 | Rôle                                           | Responsabilités actuelles                                       |
 | -------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------- |
-| `header/header.component.ts`                 | Afficher l’en-tête commun                      | Afficher le titre de l’application et le titre de la page.      |
+| `header/header.component.ts`                 | Afficher l’en-tête commun                      | Afficher les titres, l’introduction sur l’accueil et la liste des KPI.      |
 | `kpi/kpi.component.ts`                       | Afficher un indicateur                         | Afficher son libellé et sa valeur.                              |
-| `kpi-list/kpi-list.component.ts`             | Afficher une liste d’indicateurs               | Recevoir et affichier une liste d'indicateurs                   |
-| `button/button.component.ts`                 | Fournir un lien avec une apparence de bouton   | Naviguer avec `RouterLink`                                      |
-| `medals-chart/medals-chart.component.ts`     | Afficher le graphique global                   | Construire le camembert et émettre l’identifiant du pays cliqué |
-| `country-chart/country-chart.component.ts`   | Afficher le graphique d’un pays                | Construire la courbe                                            |
-| `dashboard/dashboard.component.ts`           | Assembler la présentation de la vue d’ensemble | Transmettre les données au graphique et les KPI à leur liste    |
-| `country-detail/country-detail.component.ts` | Assembler la présentation du détail d’un pays  | Transmettre les participations au graphique                     |
-
-### Modèles
-
-| Fichier                  | Rôle et responsabilités                                      |
-| ------------------------ | ------------------------------------------------------------ |
-| `Kpi.ts`                 | Définir le type `Kpi` utilisé pour les indicateurs affichés. |
-| `olympic.model.ts`       | Définir le modèle de données des pays.                       |
-| `participation.model.ts` | Définir le modèle de données des participations              |
-| `page-state.model.ts`    | Définir les états utilisées par les pages                    |
-
-Un pays possède plusieurs participations. Les modèles décrivent les types attendus ; ils ne valident pas le JSON à l’exécution.
-
-## Parcours des données et navigation
-
-1. Le routeur affiche `HomeComponent` pour `/`.
-2. La page s’abonne à `DataService.getCountries()` ; le service charge et partage les données du fichier JSON.
-3. La page calcule les indicateurs et gère les états.
-4. `DashboardComponent` transmet les indicateurs à `KpiListComponent` et les données à `MedalsChartComponent`.
-5. `MedalsChartComponent` crée le graphique et fait remonter l'identifiant du pays cliqué.
-6. Le clic ouvre `/country/:id`, associé à `CountryComponent`.
-7. Cette page récupère le pays avec `getCountryById()`, calculs les indicateurs et gère les états.
-8. `CountryDetailComponent` transmet les indicateurs à `KpiListComponent` et les données à `CountryChartComponent`.
-9. `CountryChartComponent` crée le graphique.
-10. Le bouton « Go back » utilise `RouterLink` pour revenir à `/`.
+| `kpi-list/kpi-list.component.ts`             | Afficher une liste d’indicateurs               | Recevoir et afficher une liste d’indicateurs                   |
+| `button/button.component.ts`                 | Fournir un bouton de navigation   | Naviguer avec `RouterLink`                                      |
+| `medals-chart/medals-chart.component.ts`     | Afficher le graphique global                   | Construire le camembert, afficher un tableau avec des liens vers les pays et émettre l’identifiant du pays cliqué |
+| `country-chart/country-chart.component.ts`   | Afficher le graphique d’un pays                | Construire la courbe et le tableau des médailles par année. |
+| `error/error.component.ts` | Afficher une erreur | Présenter le message reçu dans une alerte (`role="alert"`). |
+| `spinner/spinner.component.ts` | Indiquer le chargement | Afficher une animation et le texte « Loading... » dans un statut (`role="status"`). |
 
 ## Service et accès aux données
 
@@ -108,33 +91,35 @@ Un pays possède plusieurs participations. Les modèles décrivent les types att
 Le service est déclaré avec `@Injectable({ providedIn: 'root' })`. Angular fournit une instance partagée à l’échelle de
 l’application : il joue le rôle de **singleton**.
 
-### Source et structure des données
-
-Les données proviennent du fichier local JSON, chargé par une requête HTTP GET à l’adresse `./assets/mock/olympic.json`.
-
-`HttpClient` est injecté dans le constructeur du service.
-
-Les interfaces TypeScript décrivent la structure de données attendue :
-
-- `Olympic` : identifiant du pays, nom et liste de participations.
-- `Participation` : identifiant de la participation, année, ville,
-  nombre de médailles et nombre d’athlètes.
+[diagramme du DataService](src/assets/images/DataService.png)
 
 ### Méthodes disponibles
 
 | Méthode                                                        | Résultat                                                       |
 | -------------------------------------------------------------- | -------------------------------------------------------------- |
-| `getCountries(): Observable<Olympic[]>`                        | Fournit la liste des pays et leurs participations.             |
+| `getCountries(): Observable<Olympic[]>`                        | Fournit les pays triés par nom selon `LOCALE_ID`, avec les noms vides en fin de liste, et leurs participations.             |
 | `getCountryById(id: number): Observable<Olympic \| undefined>` | Fournit le pays correspondant, ou `undefined` s’il est absent. |
 
 `getCountryById()` réutilise les données renvoyées par `getCountries()`. `map` et `find` permettent de filtrer le pays recherché. Cette recherche ne crée pas de requête HTTP distincte : elle réutilise le chargement partagé et sa réponse mise en cache.
 
-### Utilisation par les pages
+### Source et structure des données
 
-`HomeComponent` s’abonne à `getCountries()`. Il effectue les calculs pour construire le graphique global.
+Les données proviennent du fichier local JSON, chargé par une requête HTTP GET à l’adresse `./assets/mock/olympic.json`.
+
+| Fichier                  | Rôle et responsabilités                                      |
+| ------------------------ | ------------------------------------------------------------ |
+| `Kpi.ts`                 | Définir le type `Kpi` utilisé pour les indicateurs affichés. |
+| `olympic.model.ts`       | Définir le modèle de données des pays.                       |
+| `participation.model.ts` | Définir le modèle de données des participations              |
+| `page-state.ts`    | Définir les états utilisés par les pages                    |
+
+Un pays possède plusieurs participations. Les modèles décrivent les types attendus ; ils ne valident pas le JSON à l’exécution.
+
+## Utilisation par les pages
+
+`HomeComponent` s’abonne à `getCountries()`. Il calcule les KPI ; `MedalsChartComponent` calcule les totaux de médailles par pays pour le graphique et le tableau.
 
 `CountryComponent` observe les paramètres de la route.
-
 - Il convertit la valeur reçue en identifiant numérique et appelle `getCountryById()`.
 - `switchMap` permet de remplacer la recherche précédente lorsque le paramètre de la route change.
 
@@ -146,3 +131,13 @@ Les pages Home et Country utilisent `PageState` pour gérer quatre états : `loa
 
 - Le template utilise `@switch (state)` pour afficher le spinner, un message d’absence de données, une erreur ou les indicateurs et le graphique.
 - Un pays introuvable ou un identifiant invalide redirige vers la page `not-found`.
+
+- Les erreurs HTTP sont converties en messages par `getHttpErrorMessage()` puis affichées par `ErrorComponent`.
+
+### Utilitaires partagés
+
+`core/utils/http-error-message.ts` exporte `getHttpErrorMessage(error: HttpErrorResponse): string`. Cette fonction est utilisée par `HomeComponent` et `CountryComponent` pour éviter de dupliquer la traduction des statuts HTTP en messages anglais.
+
+## Évolution vers une API
+
+Les pages dépendent des méthodes de `DataService`, ce qui centralise le remplacement du fichier JSON par une API. Si la réponse conserve la structure `Olympic[]`, l’URL de chargement peut être adaptée dans le service sans changer les composants de présentation.
