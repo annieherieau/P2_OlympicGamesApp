@@ -25,7 +25,6 @@ import { CountryChartComponent } from 'src/app/components/country-chart/country-
     CountryChartComponent,
     ErrorComponent,
     SpinnerComponent,
-    CountryChartComponent
 ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss'],

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { By } from '@angular/platform-browser';
+import { provideRouter, Router, RouterLink } from '@angular/router';
 
 import { ButtonComponent } from './button.component';
 
@@ -25,37 +26,27 @@ describe('ButtonComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  function link(): HTMLAnchorElement {
+  function button(): HTMLButtonElement {
     const element: HTMLElement = fixture.nativeElement;
-    return element.querySelector('a')!;
+    return element.querySelector('button')!;
   }
 
-  it('should display the label and generate the link', () => {
-    expect(link().textContent?.trim()).toBe('Go back');
-    expect(link().getAttribute('href')).toBe('/');
+  function targetUrl(): string {
+    const routerLink = fixture.debugElement.query(By.directive(RouterLink))
+      .injector.get(RouterLink);
+    return TestBed.inject(Router).serializeUrl(routerLink.urlTree!);
+  }
+
+  it('should display the label and target the home page', () => {
+    expect(button().textContent?.trim()).toBe('Go back');
+    expect(targetUrl()).toBe('/');
   });
 
-  for (const classes of ['primary rounded', ['primary', 'rounded']]) {
-    it(`should apply classes as ${typeof classes === 'string' ? 'a string' : 'an array'} and keep the button class`, () => {
-      fixture.componentRef.setInput('classes', classes);
-      fixture.detectChanges();
-      expect(Array.from(link().classList).sort()).toEqual(['button', 'primary', 'rounded']);
-    });
-  }
-
-  it('should update the label, link and classes when inputs change', () => {
-    fixture.componentRef.setInput('classes', 'primary rounded');
-    fixture.detectChanges();
-    expect(link().classList.contains('primary')).toBeTrue();
+  it('should update the label and link when inputs change', () => {
     fixture.componentRef.setInput('label', 'France');
     fixture.componentRef.setInput('link', '/country/7');
-    fixture.componentRef.setInput('classes', ['secondary']);
     fixture.detectChanges();
-    expect(link().textContent?.trim()).toBe('France');
-    expect(link().getAttribute('href')).toBe('/country/7');
-    expect(Array.from(link().classList).sort()).toEqual(['button', 'secondary']);
-    fixture.componentRef.setInput('classes', '');
-    fixture.detectChanges();
-    expect(Array.from(link().classList)).toEqual(['button']);
+    expect(button().textContent?.trim()).toBe('France');
+    expect(targetUrl()).toBe('/country/7');
   });
 });

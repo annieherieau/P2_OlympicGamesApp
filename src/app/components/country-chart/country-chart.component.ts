@@ -21,6 +21,9 @@ export class CountryChartComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
   @Input() data: Participation[] = [];
+
+  private static nextDescriptionId = 0;
+  readonly descriptionId = `country-medals-description-${CountryChartComponent.nextDescriptionId++}`;
   // Récupère le canvas et sera transmis à Chart.js.
   @ViewChild('canvas')
   canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -39,7 +42,7 @@ export class CountryChartComponent
   ngOnChanges(): void {
     this.renderChart();
   }
-  
+
   // Supprime le graphique quand le composant est détruit.
   ngOnDestroy(): void {
     this.viewReady = false;
@@ -71,12 +74,38 @@ export class CountryChartComponent
           {
             label: 'medals',
             data: medals,
-            backgroundColor: '#0b868f',
+            backgroundColor: '#0a747c',
+            borderColor: '#0a747c',
+            pointBackgroundColor: '#0a747c',
+            pointBorderColor: '#0a747c',
           },
         ],
       },
       options: {
-        aspectRatio: 2.5,
+        responsive: true,
+        maintainAspectRatio: false,
+
+        scales: {
+          x: { ticks: { color: '#595959' } },
+          y: { ticks: { color: '#595959' } },
+        },
+        plugins: {
+          legend: { labels: { color: '#595959' } },
+          tooltip: {
+            backgroundColor: '#222',
+            titleColor: '#fff',
+            bodyColor: '#fff',
+          },
+          title: {
+            display: true,
+            text: 'Dates',
+            color: '#595959',
+            position: 'bottom',
+            font: {
+              size: 18,
+            },
+          },
+        },
       },
     });
   }

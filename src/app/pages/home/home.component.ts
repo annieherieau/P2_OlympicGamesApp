@@ -67,9 +67,7 @@ export class HomeComponent implements AfterViewInit {
   private renderData(data: Olympic[]): void {
     if (data.length === 0) {
       this.state = 'empty';
-      this.error = 'No Olympic data found';
     } else {
-      this.error = '';
       this.data = data;
       this.buildKpiList();
       this.state = 'success';

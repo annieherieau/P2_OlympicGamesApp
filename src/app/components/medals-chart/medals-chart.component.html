@@ -1,1 +1,31 @@
-<canvas #canvas></canvas>
+<div class="chart-container">
+  <canvas
+    #canvas
+    role="img"
+    aria-label="Total Olympic medals by country"
+    [attr.aria-describedby]="descriptionId"
+  ></canvas>
+</div>
+<small [id]="descriptionId"> Select a country below for yearly results. </small>
+
+<table class="table medals-table">
+  <caption class="visually-hidden">
+    Total Olympic medals by country
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Country</th>
+      <th scope="col">Total medals</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of medalRows; track row.id) {
+      <tr>
+        <th scope="row">
+          <a [routerLink]="['/country', row.id]">{{ row.country }}</a>
+        </th>
+        <td>{{ row.total }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -1,21 +1,27 @@
-<app-header [titlePage]="titlePage" [kpiList]="kpiList"></app-header>
-@switch (state) {
-  @case ("loading") {
-    <app-spinner></app-spinner>
-  }
+<app-header
+  [titlePage]="titlePage"
+  [kpiList]="kpiList"
+  [isHome]="true"
+></app-header>
+<main class="center">
+  @switch (state) {
+    @case ("loading") {
+      <app-spinner></app-spinner>
+    }
 
-  @case ("empty") {
-    <p>No data.</p>
-  }
+    @case ("empty") {
+      <p>No Olympic data found</p>
+    }
 
-  @case ("error") {
-    <app-error [error]="error"></app-error>
-  }
+    @case ("error") {
+      <app-error [error]="error"></app-error>
+    }
 
-  @case ("success") {
-    <app-medals-chart
-      [data]="data"
-      (countryId)="onCountryId($event)"
-    ></app-medals-chart>
+    @case ("success") {
+      <app-medals-chart
+        [data]="data"
+        (countryId)="onCountryId($event)"
+      ></app-medals-chart>
+    }
   }
-}
+</main>

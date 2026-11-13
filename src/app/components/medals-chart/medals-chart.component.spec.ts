@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import Chart from 'chart.js/auto';
 import { Olympic } from 'src/app/core/models/olympic.model';
 import { MedalsChartComponent } from './medals-chart.component';
+import { provideRouter } from '@angular/router';
 
 describe('MedalsChartComponent', () => {
   let fixture: ComponentFixture<MedalsChartComponent>;
@@ -22,6 +23,7 @@ describe('MedalsChartComponent', () => {
     Chart.defaults.animation = false;
     await TestBed.configureTestingModule({
       imports: [MedalsChartComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(MedalsChartComponent);
   });
