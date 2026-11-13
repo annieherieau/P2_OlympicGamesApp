@@ -1,1 +1,32 @@
 /* Styles globaux de l'application uniquement. */
+.page-layout {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+// Étend chaque bloc qq soit le nombre de colonnes
+.page-layout > * {
+  grid-column: 1 / -1; 
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .page-layout {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 24px;
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .page-layout {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}

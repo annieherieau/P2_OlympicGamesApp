@@ -1,7 +1,16 @@
 .split {
-  display: flex;
-  flex-direction: row;
+  // KPI emplilés pour mobile
+  display: grid;
+  grid-template-columns: minmax(0, 400px);
   justify-content: center;
-  gap: 20px;
-  margin: 5px;
+  gap: 10px;
+  margin: 20px 5px;
+}
+
+@media (min-width: 768px) {
+  .split {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(0, 300px);
+  }
 }
