@@ -121,8 +121,7 @@ describe('HomeComponent', () => {
     await renderCountries([]);
 
     expect(component.state).toBe('empty');
-    expect(component.error).toBe('No Olympic data found');
-    expect(fixture.nativeElement.querySelector('p')?.textContent.trim()).toBe('No data.');
+    expect(fixture.nativeElement.querySelector('main p')?.textContent.trim()).toBe('No Olympic data found');
     expect(fixture.nativeElement.querySelector('app-medals-chart')).toBeNull();
     expect(fixture.nativeElement.querySelector('app-spinner')).toBeNull();
     expect(fixture.nativeElement.querySelector('app-error')).toBeNull();

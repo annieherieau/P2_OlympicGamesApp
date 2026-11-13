@@ -8,18 +8,3 @@
   margin-inline: auto;
   text-align: left;
 }
-
-.wrapper-container {
-  display: flex;
-  justify-content: center;
-}
-
-.container {
-  width: 50%;
-}
-
-@media screen and (max-width: 1000px) {
-  .container {
-    width: 100%;
-  }
-}
