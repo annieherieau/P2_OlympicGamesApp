@@ -5,7 +5,9 @@
   }
 
   @case ("empty") {
-    <p>No data.</p>
+    <div class="center">
+      <p>No data.</p>
+    </div>
   }
 
   @case ("error") {
@@ -14,9 +16,7 @@
 
   @case ("success") {
     <div>
-      <app-country-chart
-        [data]="data"
-      ></app-country-chart>
+      <app-country-chart [data]="data"></app-country-chart>
     </div>
   }
 }

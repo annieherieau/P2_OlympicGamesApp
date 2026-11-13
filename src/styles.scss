@@ -40,3 +40,13 @@
   margin-inline: auto;
  
 }
+
+.center {
+  // Centre le bloc du message horizontalement.
+  display: flex;
+  justify-content: center;
+
+  // Centre aussi le texte lorsqu’il occupe plusieurs lignes.
+  text-align: center;
+  padding: 16px;
+}
