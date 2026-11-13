@@ -30,3 +30,13 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 }
+
+.chart-container {
+  // Permet à Chart.js de calculer les dimensions du canvas.
+  position: relative;
+
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+ 
+}

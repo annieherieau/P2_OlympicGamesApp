@@ -99,7 +99,8 @@ export class MedalsChartComponent implements AfterViewInit, OnChanges, OnDestroy
         ],
       },
       options: {
-        aspectRatio: 2.5,
+        responsive: true,
+        maintainAspectRatio: false,
         onClick: (e) => {
           if (e.native && this.pieChart) {
             // Recherche le secteur situé sous le clic.

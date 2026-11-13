@@ -39,7 +39,7 @@ export class CountryChartComponent
   ngOnChanges(): void {
     this.renderChart();
   }
-  
+
   // Supprime le graphique quand le composant est détruit.
   ngOnDestroy(): void {
     this.viewReady = false;
@@ -76,7 +76,16 @@ export class CountryChartComponent
         ],
       },
       options: {
-        aspectRatio: 2.5,
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          title: {
+            display: true,
+            text: 'Dates',
+            position: 'bottom',
+          },
+        },
       },
     });
   }
